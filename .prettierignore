@@ -1,0 +1,10 @@
+.next
+out
+build
+coverage
+storybook-static
+playwright-report
+test-results
+.lighthouseci
+pnpm-lock.yaml
+next-env.d.ts
