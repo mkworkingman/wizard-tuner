@@ -1,6 +1,10 @@
 import type { Preview } from "@storybook/nextjs-vite";
 
+import { fontVariables } from "../app/fonts";
 import "../app/globals.css";
+
+// Same font CSS variables the root layout sets on <html>.
+document.documentElement.classList.add(...fontVariables.split(" "));
 
 const preview: Preview = {
   parameters: {
@@ -16,28 +20,13 @@ const preview: Preview = {
       test: "error",
     },
   },
-  globalTypes: {
-    theme: {
-      description: "Colour theme",
-      toolbar: {
-        title: "Theme",
-        icon: "mirror",
-        items: ["light", "dark"],
-        dynamicTitle: true,
-      },
-    },
-  },
-  initialGlobals: { theme: "light" },
+  // Dark theme only for now: the tokens in app/globals.css are the dark values.
   decorators: [
-    (Story, context) => {
-      const dark = context.globals.theme === "dark";
-      document.documentElement.classList.toggle("dark", dark);
-      return (
-        <div className="p-6">
-          <Story />
-        </div>
-      );
-    },
+    (Story) => (
+      <div className="p-6">
+        <Story />
+      </div>
+    ),
   ],
 };
 

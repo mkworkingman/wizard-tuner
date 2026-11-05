@@ -49,9 +49,6 @@ export default defineConfig([
       "better-tailwindcss": { entryPoint: "app/globals.css" },
     },
     rules: {
-      // `dark` is the theme class that the `dark:` variant in globals.css keys off,
-      // not a utility, so the plugin can't resolve it.
-      "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["^dark$"] }],
       "better-tailwindcss/no-restricted-classes": [
         "error",
         {

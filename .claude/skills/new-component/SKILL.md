@@ -32,8 +32,9 @@ Before writing anything:
 3. Compose primitives in `components/`. Don't edit `components/ui/`, unless Radix behaviour itself
    must change (say why in the PR).
 
-Placement: shared → `components/<name>.tsx` with a story. Used by one route only →
-`app/<route>/_components/`. If unclear, ask.
+Placement: shared → `components/<Name>.tsx` with a story. Used by one route only →
+`app/<route>/_components/<Name>.tsx`. If unclear, ask. File names are PascalCase, matching the
+exported component (`NavButton.tsx` → `NavButton`); see AGENTS.md for the exceptions.
 
 ## 2. States list (up front, before code)
 
@@ -41,17 +42,18 @@ Write out the states the design shows, then ask about each common one that's mis
 invent its look:
 
 default · hover · focus-visible · active/pressed · selected/checked · open/closed · disabled ·
-loading · error/invalid · empty · long content (overflow, wrapping, truncation) · light and dark
-theme · narrow viewport (if the design has breakpoints).
+loading · error/invalid · empty · long content (overflow, wrapping, truncation) · narrow viewport (if the design has breakpoints).
 
 Skip the ones that can't apply (a static badge has no loading state). The confirmed list drives
 the stories in step 5.
 
 ## 3. Figma → tokens mapping (with a stop condition)
 
-Tokens live in `app/globals.css` (shadcn base set: `background`, `foreground`, `card`, `popover`,
-`primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-*`,
-`sidebar-*`, `radius-*`). Read the file. Don't trust this list if it's out of date.
+Tokens live in `app/globals.css`: `background`, `foreground`, and the per-tool families
+(`tool-<name>`, `tool-<name>-surface`, `tool-<name>-hover`, `tool-foreground`). The app is dark-only
+for now: `:root` holds the dark values and there is no light theme. Read the file; don't trust
+this list if it's out of date. shadcn primitives expect the shadcn base tokens (`primary`,
+`muted`, `border`, `ring`, …), which were removed: add the ones a primitive needs before using it.
 
 Colours, in this order:
 
@@ -63,7 +65,7 @@ Colours, in this order:
    - > 0.05 → **stop**. Don't add tokens yourself.
 3. **Stop condition.** When something has no match, collect every unmatched value for the
    component first, then propose the smallest set of new tokens that covers them. For each one
-   give a semantic name (role, not colour: `success`, not `green`), light and dark values, and
+   give a semantic name (role, not colour: `success`, not `green`), its (dark) value, and
    where it's used. Wait for approval. Expect to propose 0, sometimes 1–2. If you need more than
    3, the design probably isn't using the system; say so.
 
@@ -106,8 +108,10 @@ matches closely, ask. Images: `next/image` with explicit size.
   arrows), focus moves, disabled blocks interaction, controlled callbacks fire (`fn()` from
   `storybook/test`). Query by role and name, like a user would.
 - Long content: a story with real long text, not "Lorem".
-- Dark mode is the Storybook toolbar theme (preview toggles `.dark`). Add a dark story if the
-  component has dark-specific styling worth pinning down.
+- Hover / active / focus-visible: play's synthetic events don't trigger CSS pseudo-classes. Force
+  them with `storybook-addon-pseudo-states` (`parameters.pseudo`) and assert computed styles; see
+  `stories/NavButton.stories.tsx` for the setup that also works in Vitest. Show every variant ×
+  state in one matrix story.
 - axe runs automatically and violations fail. Don't disable rules to make a story pass. If a
   violation seems unavoidable, ask.
 - Don't add unit tests that render and click. That belongs in the story.

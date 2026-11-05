@@ -7,7 +7,7 @@ import { ROUTES } from "./routes";
 
 // Core Web Vitals "good" thresholds. INP is not asserted here: it needs real user
 // interactions to be meaningful. Lighthouse TBT is the lab proxy; field INP comes from
-// app/_components/web-vitals.tsx.
+// app/_components/WebVitals.tsx.
 const LCP_MAX_MS = 2500;
 const CLS_MAX = 0.1;
 

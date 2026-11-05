@@ -37,8 +37,9 @@ When to verify:
 
 ## Where code goes
 
-- `app/` — routes, layouts and pages (App Router). Route-private components go in a `_components/` folder next to the route that uses them (e.g. `app/_components/web-vitals.tsx` for the root layout).
+- `app/` — routes, layouts and pages (App Router). Route-private components go in a `_components/` folder next to the route that uses them (e.g. `app/_components/WebVitals.tsx` for the root layout).
 - `components/` — shared, reusable components composed from `components/ui/` primitives. Each one gets a story in `stories/`.
+- **Component file names are PascalCase and match the exported component:** `components/NavButton.tsx` exports `NavButton`, with its story in `stories/NavButton.stories.tsx`. This applies to new components in `components/` and `_components/` folders. Exceptions: `components/ui/` (shadcn CLI output stays kebab-case), Next.js special files (`page.tsx`, `layout.tsx`, …), and non-component modules (`lib/`, `actions.ts`, `fonts.ts`). `data-slot` values stay kebab-case (`data-slot="nav-button"`).
 - Data fetching happens in Server Components; server actions go in an `actions.ts` file next to the route that uses them.
 - `lib/` — framework-agnostic logic (validation, formatting, wizard step rules, helpers like `cn`), unit-tested with a `*.test.ts` file alongside.
 

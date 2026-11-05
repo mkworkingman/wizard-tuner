@@ -3,7 +3,12 @@ import tailwindcss from "@tailwindcss/vite";
 
 const config: StorybookConfig = {
   stories: ["../stories/**/*.stories.@(ts|tsx)"],
-  addons: ["@storybook/addon-vitest", "@storybook/addon-a11y", "@storybook/addon-docs"],
+  addons: [
+    "@storybook/addon-vitest",
+    "@storybook/addon-a11y",
+    "@storybook/addon-docs",
+    "storybook-addon-pseudo-states",
+  ],
   framework: "@storybook/nextjs-vite",
   staticDirs: ["../public"],
   // The Next app compiles Tailwind through the @tailwindcss/turbopack loader
