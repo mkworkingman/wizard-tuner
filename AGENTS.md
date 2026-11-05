@@ -51,6 +51,7 @@ When to verify:
 - Nothing else off the grid: no odd steps above 1 (`p-3`, `h-5`), no half steps (`gap-1.5`), no arbitrary px (`w-[13px]`). ESLint fails on them.
 - Exception: 1–2px for borders, outlines, focus rings, shadows and other effects (`border`, `border-2`, `ring-2`, `h-px`).
 - Hand-written CSS uses rem in multiples of 0.5rem; px only for the 1–2px exceptions.
+- **Transitions are 300ms.** `--default-transition-duration` in `app/globals.css` sets this for every `transition*` utility, so don't add `duration-*` classes. Hand-written CSS uses `var(--default-transition-duration)`.
 - `components/ui/` = shadcn primitives (Radix-based, added with `pnpm dlx shadcn@latest add <name>`). Compose them in `components/`. Extend primitives via `className` and `cva` variants; edit a file in `components/ui/` only if Radix behaviour itself must change, and say why in the PR.
 - Every new component needs a story in `stories/` covering its states; add a `play` test for interactive behaviour.
 - Accessibility is a hard requirement: semantic HTML, labelled controls, keyboard support, visible focus. Story and e2e axe checks must pass.
