@@ -13,6 +13,10 @@ const PALETTE =
 const COLOR_UTILS =
   "bg|text|border|border-[xytrblse]|ring|ring-offset|outline|fill|stroke|from|via|to|shadow|decoration|accent|caret|divide|placeholder";
 
+// 8px grid (see AGENTS.md): utilities whose numeric steps are spacing/size.
+const SPACING_UTILS =
+  "p[xytrblse]?|m[xytrblse]?|gap(-[xy])?|space-[xy]|w|h|size|min-[wh]|max-[wh]|inset(-[xy])?|top|right|bottom|left|start|end|translate-[xy]|basis|indent|scroll-[mp][xytrblse]?";
+
 export default defineConfig([
   ...nextVitals,
   ...tseslint.configs.strictTypeChecked,
@@ -57,6 +61,20 @@ export default defineConfig([
             {
               pattern: "^.*-\\[(#|rgb|hsl|oklch|oklab|lab|lch|color-mix).*\\]$",
               message: "Arbitrary colour value — add a token to app/globals.css instead.",
+            },
+            // 8px grid: Tailwind steps are 4px, so odd steps above 1 and half steps are off-grid.
+            // Step 1 (4px) is allowed but discouraged (see AGENTS.md).
+            {
+              pattern: `^([a-zA-Z0-9:/_\\[\\]&*-]*:)?!?-?(${SPACING_UTILS})-((?!1$)\\d*[13579]|\\d+\\.\\d+)$`,
+              message:
+                "Off the 8px grid — use even steps (p-2 = 8px, p-4 = 16px); p-1 (4px) only if needed.",
+            },
+            // No arbitrary px, except 1–2px effects (borders, outlines, rings, shadows, blur).
+            {
+              pattern:
+                "^(?!.*(border|outline|ring|shadow|divide|blur)).*-\\[[^\\]]*\\d+px[^\\]]*\\]$",
+              message:
+                "Arbitrary px value — use the spacing scale (rem) or add a token to app/globals.css.",
             },
           ],
         },

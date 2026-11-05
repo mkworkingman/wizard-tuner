@@ -12,23 +12,54 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 | Command                                        | What it does                                                                           |
 | ---------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `pnpm dev`                                     | Dev server                                                                             |
+| `pnpm dev` / `pnpm storybook`                  | Dev server / component workshop — long-running, human only (see below)                 |
 | `pnpm typecheck` / `pnpm lint` / `pnpm format` | TS, ESLint (strict TS, jsx-a11y strict, Tailwind token rules), Prettier                |
 | `pnpm test`                                    | Vitest unit tests (`**/*.test.ts(x)`, jsdom)                                           |
 | `pnpm test:stories`                            | Every Storybook story as a test in Chromium, with axe a11y checks (violations fail)    |
-| `pnpm storybook`                               | Component workshop / living design-system docs                                         |
 | `pnpm build && pnpm e2e`                       | Playwright e2e, page-level axe (WCAG 2.2 AA), LCP/CLS budgets — against the prod build |
-| `pnpm lhci`                                    | Lighthouse CI (needs `pnpm build` first)                                               |
 | `pnpm verify`                                  | Fast gate: typecheck, lint, format check, unit + story tests                           |
 | `pnpm verify:full`                             | `verify` + build + e2e + Lighthouse (what CI runs)                                     |
 
-Run `pnpm verify` before saying a task is done.
+Run a single target while iterating instead of the whole suite (extra args pass through to the script):
+
+- One unit test file: `pnpm test lib/utils.test.ts`
+- One story file: `pnpm test:stories stories/Button.stories.tsx`
+- One e2e spec: `pnpm build && pnpm e2e e2e/smoke.spec.ts` — Playwright only runs `pnpm start`, it never builds, so skipping `pnpm build` tests a stale build.
+
+Don't use bare `pnpm vitest run <path>` — without `--project` it runs both the unit and storybook projects.
+
+`pnpm dev` and `pnpm storybook` never exit. Don't start them unless asked; assume they're already running if you need them.
+
+When to verify:
+
+- A Stop hook (`.claude/hooks/verify-on-stop.mjs`) runs typecheck, lint, format check and unit tests whenever the working tree has changes. You still run `pnpm verify` (adds story tests) before saying a task is done.
+- Run `pnpm verify:full` when touching routes, layouts, fonts/images, anything affecting LCP/CLS, or anything that changes the e2e flows.
+
+## Where code goes
+
+- `app/` — routes, layouts and pages (App Router). Route-private components go in a `_components/` folder next to the route that uses them (e.g. `app/_components/web-vitals.tsx` for the root layout).
+- `components/` — shared, reusable components composed from `components/ui/` primitives. Each one gets a story in `stories/`.
+- Data fetching happens in Server Components; server actions go in an `actions.ts` file next to the route that uses them.
+- `lib/` — framework-agnostic logic (validation, formatting, wizard step rules, helpers like `cn`), unit-tested with a `*.test.ts` file alongside.
 
 ## Design system rules
 
 - Tokens live only in `app/globals.css` (CSS variables + `@theme inline`). Need a new colour, radius or font? Add a token there.
 - Use semantic utilities (`bg-primary`, `text-muted-foreground`, `border-border`). Never raw palette colours (`bg-zinc-500`), hex, or arbitrary colour values (`bg-[#fff]`) — ESLint fails on them.
-- `components/ui/` = shadcn primitives (Radix-based, added with `pnpm dlx shadcn@latest add <name>`). Compose them in `components/`; don't fork primitives unless necessary.
+- **8px grid:** spacing and sizes (padding, margin, gap, width/height, position) are multiples of 8px = 0.5rem. Tailwind's scale is 0.25rem (4px) per step, so use even steps: `p-2` (8px), `gap-4` (16px), `h-10` (40px).
+- 4px (0.25rem: `p-1`, `gap-1`) is allowed, but avoid it. Use it only where 8px is clearly too loose, e.g. an icon next to text or badge padding.
+- Nothing else off the grid: no odd steps above 1 (`p-3`, `h-5`), no half steps (`gap-1.5`), no arbitrary px (`w-[13px]`). ESLint fails on them.
+- Exception: 1–2px for borders, outlines, focus rings, shadows and other effects (`border`, `border-2`, `ring-2`, `h-px`).
+- Hand-written CSS uses rem in multiples of 0.5rem; px only for the 1–2px exceptions.
+- `components/ui/` = shadcn primitives (Radix-based, added with `pnpm dlx shadcn@latest add <name>`). Compose them in `components/`. Extend primitives via `className` and `cva` variants; edit a file in `components/ui/` only if Radix behaviour itself must change, and say why in the PR.
 - Every new component needs a story in `stories/` covering its states; add a `play` test for interactive behaviour.
 - Accessibility is a hard requirement: semantic HTML, labelled controls, keyboard support, visible focus. Story and e2e axe checks must pass.
 - New routes: add them to `e2e/routes.ts` so they get axe and web-vitals checks.
+
+## Testing rules
+
+Each layer owns one job — don't duplicate coverage across them.
+
+- **Story `play` tests** (`pnpm test:stories`, real Chromium + axe): component interactions and states — clicks, keyboard, focus, open/closed, disabled, error, loading, empty, long content. Write a story per state; add `play` for anything interactive.
+- **Unit tests** (`pnpm test`, jsdom): non-visual logic only — hooks, reducers, validation, formatting, wizard step rules. Don't render-and-click components here; that belongs in a story.
+- **E2E** (`pnpm e2e`): a few critical cross-page user flows plus page-level axe and web-vitals budgets. Don't test component variants here.
