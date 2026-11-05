@@ -45,7 +45,8 @@ default · hover · focus-visible · active/pressed · selected/checked · open/
 loading · error/invalid · empty · long content (overflow, wrapping, truncation) · narrow viewport (if the design has breakpoints).
 
 Skip the ones that can't apply (a static badge has no loading state). The confirmed list drives
-the stories in step 5.
+the build. It is not a list of stories: step 5 decides which states get one (pseudo-states never
+do).
 
 ## 3. Figma → tokens mapping (with a stop condition)
 
@@ -103,18 +104,31 @@ matches closely, ask. Images: `next/image` with explicit size.
 
 ## 5. Stories (`stories/<Name>.stories.tsx`)
 
-- One story per confirmed state from step 2. Use `args` so controls work.
-- A `play` function for anything interactive: click, keyboard path (Tab / Enter / Space / Esc /
-  arrows), focus moves, disabled blocks interaction, controlled callbacks fire (`fn()` from
-  `storybook/test`). Query by role and name, like a user would.
-- Long content: a story with real long text, not "Lorem".
-- Hover / active / focus-visible: play's synthetic events don't trigger CSS pseudo-classes. Force
-  them with `storybook-addon-pseudo-states` (`parameters.pseudo`) and assert computed styles; see
-  `stories/NavButton.stories.tsx` for the setup that also works in Vitest. Show every variant ×
-  state in one matrix story.
-- axe runs automatically and violations fail. Don't disable rules to make a story pass. If a
-  violation seems unavoidable, ask.
-- Don't add unit tests that render and click. That belongs in the story.
+Stories are for a human looking at Storybook. **A story earns its place only if it renders
+something visibly different that no other story + controls already shows.** Fewer is better.
+
+- One story per variant, plus one per state that is set by props or data (disabled, loading,
+  error, empty, open, selected). Use `args` so controls work.
+- Long content: don't add a separate story if a real long label fits naturally into a variant
+  story (e.g. the variant whose real copy is longest). Real text, not "Lorem".
+- A composition story (the component as the design uses it, e.g. a menu of buttons) is good: it's
+  where a human hovers, presses and tabs through it.
+- `play` only for behaviour a user performs: click, keyboard path (Tab / Enter / Space / Esc /
+  arrows), focus moves, disabled blocks interaction, callbacks fire (`fn()` from
+  `storybook/test`). Query by role and name, like a user would. Put it on an existing story.
+
+**Don't create these** (they render the same as another story or test nothing a user sees):
+
+- Hover / pressed / focus-visible / transition stories. CSS pseudo-states are checked by hovering,
+  pressing and tabbing in the real story. No forced-pseudo-state addons or tricks.
+- Stories that only assert computed styles, token values, transition properties or class names.
+- Stories for prop plumbing that looks identical (`asChild`, `className` merge, `data-slot`, ref).
+- Variant × state matrix / "all variants" stories duplicating the individual stories.
+
+axe runs automatically and violations fail. Don't disable rules to make a story pass. If a
+violation seems unavoidable, ask. Don't add unit tests that render and click.
+
+**Before finishing:** open every story in Storybook (step 6). If two look the same, delete one.
 
 ## 6. Verify
 

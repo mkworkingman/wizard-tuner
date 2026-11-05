@@ -54,7 +54,7 @@ When to verify:
 - Hand-written CSS uses rem in multiples of 0.5rem; px only for the 1–2px exceptions.
 - **Transitions are 300ms.** `--default-transition-duration` in `app/globals.css` sets this for every `transition*` utility, so don't add `duration-*` classes. Hand-written CSS uses `var(--default-transition-duration)`.
 - `components/ui/` = shadcn primitives (Radix-based, added with `pnpm dlx shadcn@latest add <name>`). Compose them in `components/`. Extend primitives via `className` and `cva` variants; edit a file in `components/ui/` only if Radix behaviour itself must change, and say why in the PR.
-- Every new component needs a story in `stories/` covering its states; add a `play` test for interactive behaviour.
+- Every new component needs stories in `stories/`: one per variant and per prop-driven state (disabled, loading, error, open, …). Each story must look different from every other one. No stories for hover/pressed/focus-visible/transitions, prop plumbing (`asChild`) or variant matrices; a human checks pseudo-states by interacting.
 - Accessibility is a hard requirement: semantic HTML, labelled controls, keyboard support, visible focus. Story and e2e axe checks must pass.
 - New routes: add them to `e2e/routes.ts` so they get axe and web-vitals checks.
 
@@ -62,6 +62,6 @@ When to verify:
 
 Each layer owns one job — don't duplicate coverage across them.
 
-- **Story `play` tests** (`pnpm test:stories`, real Chromium + axe): component interactions and states — clicks, keyboard, focus, open/closed, disabled, error, loading, empty, long content. Write a story per state; add `play` for anything interactive.
+- **Story `play` tests** (`pnpm test:stories`, real Chromium + axe): what a user does — clicks, keyboard, focus moves, open/closed, disabled blocks interaction, callbacks. Add `play` to an existing story; don't create a story just to host assertions, and don't assert computed styles or class names.
 - **Unit tests** (`pnpm test`, jsdom): non-visual logic only — hooks, reducers, validation, formatting, wizard step rules. Don't render-and-click components here; that belongs in a story.
 - **E2E** (`pnpm e2e`): a few critical cross-page user flows plus page-level axe and web-vitals budgets. Don't test component variants here.
