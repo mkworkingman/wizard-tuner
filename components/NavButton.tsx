@@ -21,9 +21,12 @@ export const navButtonVariants = cva(
   [
     "flex min-h-14 w-full items-center justify-center rounded-control border-2 px-4 py-2",
     "text-center font-display text-xl leading-6 text-tool-foreground",
-    "bg-linear-to-b transition outline-none motion-reduce:transition-none",
+    "bg-linear-to-b transition motion-reduce:transition-none",
     "active:inset-shadow-pressed",
-    "focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    // Focus uses outline, not ring: ring is a box-shadow, which `transition` animates.
+    // Outline colour is set at rest so it never changes; style/width/offset aren't
+    // transitioned, so the indicator appears instantly.
+    "outline-foreground outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid",
   ],
   {
     variants: {
