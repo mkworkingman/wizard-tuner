@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { BackHomeLink } from "./_components/BackHomeLink";
+
 /**
  * Shared shell for the tool pages. The `(tools)` route group adds no URL segment.
  * Header and footer are named view transitions: they slide in when entering a
@@ -22,12 +24,7 @@ export default function ToolsLayout({ children }: LayoutProps<"/">) {
       </header>
 
       <main className="mx-auto flex w-full max-w-7xl grow flex-col gap-4 px-4 py-8">
-        <Link
-          href="/"
-          className="w-fit text-muted-foreground underline-offset-4 outline-foreground outline-none hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
-        >
-          ← Back home
-        </Link>
+        <BackHomeLink />
         {children}
       </main>
 
