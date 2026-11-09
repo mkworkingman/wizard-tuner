@@ -194,13 +194,35 @@
   animation: var(--default-transition-duration) cubic-bezier(0.64, 0, 0.78, 0) both
     slide-from-bottom reverse;
 }
+/* "Back home" link (app/(tools)/_components/BackHomeLink.tsx): slides in from the
+ * top with the header, starting just above the viewport, and leaves the same way. */
+::view-transition-new(tools-back-link):only-child {
+  animation: var(--default-transition-duration) cubic-bezier(0.22, 1, 0.36, 1) both
+    slide-from-above-header;
+}
+::view-transition-old(tools-back-link):only-child {
+  animation: var(--default-transition-duration) cubic-bezier(0.64, 0, 0.78, 0) both
+    slide-from-above-header reverse;
+}
 ::view-transition-group(tools-header),
-::view-transition-group(tools-footer) {
+::view-transition-group(tools-footer),
+::view-transition-group(tools-back-link) {
   animation: none;
+}
+/* The link passes behind the header, not over it. */
+::view-transition-group(tools-header) {
+  z-index: 1;
 }
 @keyframes slide-from-top {
   from {
     transform: translateY(-100%);
+  }
+}
+/* Own height + the link's offset from the viewport top: header (2rem padding +
+ * 2rem line + 2px border) + main's 2rem top padding. */
+@keyframes slide-from-above-header {
+  from {
+    transform: translateY(calc(-100% - 6rem - 2px));
   }
 }
 @keyframes slide-from-bottom {

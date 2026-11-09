@@ -26,6 +26,8 @@ export function BackHomeLink() {
     <Link
       ref={ref}
       href="/"
+      // Fades in/out with the tool-page chrome (CSS in app/globals.css).
+      style={{ viewTransitionName: "tools-back-link" }}
       className="w-fit text-muted-foreground underline-offset-4 outline-foreground outline-none hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
     >
       ← Back home
