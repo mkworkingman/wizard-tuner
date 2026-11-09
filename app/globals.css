@@ -12,6 +12,11 @@
   color-scheme: dark;
   --background: oklch(0.178 0 0); /* #111 */
   --foreground: oklch(0.949 0 0); /* #eee */
+  --muted-foreground: oklch(0.75 0 0);
+
+  /* Tool-page header/footer. */
+  --chrome: oklch(0.21 0 0);
+  --border: oklch(1 0 0 / 15%);
 
   /* Text on tool surfaces. */
   --tool-foreground: oklch(1 0 0); /* white */
@@ -37,6 +42,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-chrome: var(--chrome);
+  --color-border: var(--border);
   --color-tool-foreground: var(--tool-foreground);
 
   /* Hover gradient end = surface + 47% accent (ΔE ≤ 0.01 vs Figma #4c1d95 / #0f4f4a). */
@@ -83,5 +91,134 @@
 @layer base {
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/*
+ * NavButton <-> ToolCard morph (React <ViewTransition share="morph">, names from
+ * toolTransitionName() in components/ToolCard.tsx).
+ * The group moves/resizes from the button's box to the card's box. The image-pair
+ * draws a real border + surface at the group's live size, so the button itself
+ * appears to grow. Snapshots are never stretched: the old content fades out at
+ * once, the new content fades in near the end while the drawn box fades away,
+ * handing off to the real element.
+ */
+::view-transition-group(.morph) {
+  animation-duration: var(--default-transition-duration);
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+::view-transition-image-pair(.morph) {
+  box-sizing: border-box;
+  overflow: clip;
+  border: 2px solid var(--morph-border);
+  border-radius: var(--radius-control);
+  background: var(--morph-bg);
+  animation: morph-box-out var(--default-transition-duration) linear both;
+}
+::view-transition-old(.morph),
+::view-transition-new(.morph) {
+  height: 100%;
+  object-fit: none;
+  object-position: center;
+  mix-blend-mode: normal;
+}
+::view-transition-old(.morph) {
+  animation: morph-fade-out calc(var(--default-transition-duration) * 0.35) ease-out both;
+}
+::view-transition-new(.morph) {
+  animation: morph-fade-in calc(var(--default-transition-duration) * 0.35) ease-out
+    calc(var(--default-transition-duration) * 0.65) both;
+}
+@keyframes morph-box-out {
+  0%,
+  65% {
+    border-color: var(--morph-border);
+    background: var(--morph-bg);
+  }
+  100% {
+    border-color: transparent;
+    background: transparent;
+  }
+}
+@keyframes morph-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes morph-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Box colours drawn during each tool's morph. */
+::view-transition-image-pair(tuner-card) {
+  --morph-border: var(--tool-tuner);
+  --morph-bg: var(--tool-tuner-surface);
+}
+::view-transition-image-pair(ear-training-card) {
+  --morph-border: var(--tool-ear-training);
+  --morph-bg: var(--tool-ear-training-surface);
+}
+::view-transition-image-pair(metronome-card) {
+  --morph-border: var(--tool-metronome);
+  --morph-bg: var(--tool-metronome-surface);
+}
+::view-transition-image-pair(beat-machine-card) {
+  --morph-border: var(--tool-beat-machine);
+  --morph-bg: var(--tool-beat-machine-surface);
+}
+::view-transition-image-pair(about-card) {
+  --morph-border: var(--tool-about);
+  --morph-bg: var(--tool-about-surface);
+}
+
+/*
+ * Tool-page chrome (view-transition-name set in app/(tools)/layout.tsx).
+ * :only-child = the element exists on one side of the navigation only: a lone
+ * "new" is entering, a lone "old" is leaving. Header moves via the top edge,
+ * footer via the bottom. Between tool pages both sides have it, so it stays put.
+ */
+::view-transition-new(tools-header):only-child {
+  animation: var(--default-transition-duration) cubic-bezier(0.22, 1, 0.36, 1) both slide-from-top;
+}
+::view-transition-old(tools-header):only-child {
+  animation: var(--default-transition-duration) cubic-bezier(0.64, 0, 0.78, 0) both slide-from-top
+    reverse;
+}
+::view-transition-new(tools-footer):only-child {
+  animation: var(--default-transition-duration) cubic-bezier(0.22, 1, 0.36, 1) both
+    slide-from-bottom;
+}
+::view-transition-old(tools-footer):only-child {
+  animation: var(--default-transition-duration) cubic-bezier(0.64, 0, 0.78, 0) both
+    slide-from-bottom reverse;
+}
+::view-transition-group(tools-header),
+::view-transition-group(tools-footer) {
+  animation: none;
+}
+@keyframes slide-from-top {
+  from {
+    transform: translateY(-100%);
+  }
+}
+@keyframes slide-from-bottom {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }
