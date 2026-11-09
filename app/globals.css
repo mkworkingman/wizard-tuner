@@ -36,7 +36,7 @@
 
   /* Pressed shading (Figma "Active interior shading"). */
   --tool-highlight: oklch(1 0 0 / 15%);
-  --tool-shading: oklch(1 0 0 / 55%);
+  --tool-shading: oklch(0 0 0 / 55%);
 }
 
 @theme inline {
@@ -85,7 +85,7 @@
 
   --radius-control: 0.25rem;
 
-  --default-transition-duration: 300ms;
+  --default-transition-duration: 200ms;
 }
 
 @layer base {
