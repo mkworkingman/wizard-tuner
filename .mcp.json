@@ -2,7 +2,14 @@
   "mcpServers": {
     "chrome-devtools": {
       "command": "cmd",
-      "args": ["/c", "npx", "-y", "chrome-devtools-mcp@latest", "--isolated"]
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@1.12.0",
+        "--isolated",
+        "--no-usage-statistics"
+      ]
     },
     "shadcn": {
       "command": "cmd",

@@ -50,3 +50,6 @@ storybook-static
 /playwright/.cache/
 /.lighthouseci/
 /coverage/
+
+# claude code
+.claude/worktrees/
