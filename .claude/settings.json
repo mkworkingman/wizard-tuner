@@ -24,5 +24,27 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm verify)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm format:check)",
+      "Bash(pnpm test*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "mcp__shadcn",
+      "mcp__storybook"
+    ],
+    "ask": ["Bash(git push*)", "Bash(pnpm add*)", "Bash(pnpm remove*)", "Bash(pnpm dlx*)"],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./pnpm-lock.yaml)",
+      "Edit(./.next/**)",
+      "Edit(./next-env.d.ts)"
+    ]
   }
 }
