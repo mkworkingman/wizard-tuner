@@ -80,6 +80,12 @@ export default defineConfig([
               message:
                 "Hand-written focus outline — use the shared `focus-ring` utility from app/globals.css.",
             },
+            // Transitions are 200ms via --default-transition-duration in app/globals.css.
+            {
+              pattern: "(^|:)!?duration-.*$",
+              message:
+                "No duration-* classes — --default-transition-duration in app/globals.css sets 200ms for every transition.",
+            },
             // No arbitrary px, except 1–2px effects (borders, outlines, rings, shadows, blur).
             {
               pattern:
@@ -102,6 +108,36 @@ export default defineConfig([
       "@typescript-eslint/array-type": "off",
       "@typescript-eslint/no-unnecessary-condition": "off",
     },
+  },
+
+  // Component files and their stories are PascalCase (NavButton.tsx, NavButton.stories.tsx).
+  // components/ui stays kebab-case (shadcn CLI output).
+  {
+    files: ["components/**/*.tsx", "**/_components/**/*.tsx", "stories/**/*.tsx"],
+    ignores: ["components/ui/**"],
+    plugins: {
+      local: {
+        rules: {
+          "pascal-case-filename": {
+            meta: { type: "problem", schema: [] },
+            create(context) {
+              return {
+                Program(node) {
+                  const name = context.filename.split(/[\\/]/).pop() ?? ""
+                  if (!/^[A-Z][A-Za-z0-9]*(\.stories)?\.tsx$/.test(name)) {
+                    context.report({
+                      node,
+                      message: `File name '${name}' must be PascalCase and match the exported component (e.g. NavButton.tsx).`,
+                    })
+                  }
+                },
+              }
+            },
+          },
+        },
+      },
+    },
+    rules: { "local/pascal-case-filename": "error" },
   },
 
   ...storybook.configs["flat/recommended"],

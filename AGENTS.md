@@ -12,7 +12,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 | Command                                        | What it does                                                                           |
 | ---------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `pnpm dev` / `pnpm storybook`                  | Dev server / component workshop — long-running, human only (see below)                 |
+| `pnpm dev` / `pnpm storybook`                  | Dev server / component workshop — human only, a hook blocks them; assume they're up    |
 | `pnpm typecheck` / `pnpm lint` / `pnpm format` | TS, ESLint (strict TS, jsx-a11y strict, Tailwind token rules), Prettier                |
 | `pnpm test`                                    | Vitest unit tests (`**/*.test.ts(x)`, jsdom)                                           |
 | `pnpm test:stories`                            | Every Storybook story as a test in Chromium, with axe a11y checks (violations fail)    |
@@ -26,44 +26,39 @@ Run a single target while iterating instead of the whole suite (extra args pass 
 - One story file: `pnpm test:stories stories/Button.stories.tsx`
 - One e2e spec: `pnpm build && pnpm e2e e2e/smoke.spec.ts` — Playwright only runs `pnpm start`, it never builds, so skipping `pnpm build` tests a stale build.
 
-Don't use bare `pnpm vitest run <path>` — without `--project` it runs both the unit and storybook projects.
-
-`pnpm dev` and `pnpm storybook` never exit. Don't start them unless asked; assume they're already running if you need them.
-
 When to verify:
 
-- A Stop hook (`.claude/hooks/verify-on-stop.mjs`) runs typecheck, lint, format check and unit tests whenever the working tree has changes. You still run `pnpm verify` (adds story tests) before saying a task is done.
+- A Stop hook (`.claude/hooks/verify-on-stop.mjs`) runs the `pnpm verify` checks whenever the working tree has changes (story tests only when stories or components changed) and sends failures back to you. Use the `verify` skill before a commit.
 - Run `pnpm verify:full` when touching routes, layouts, fonts/images, anything affecting LCP/CLS, or anything that changes the e2e flows.
 
 ## Where code goes
 
 - `app/` — routes, layouts and pages (App Router). Route-private components go in a `_components/` folder next to the route that uses them (e.g. `app/_components/WebVitals.tsx` for the root layout).
 - `components/` — shared, reusable components composed from `components/ui/` primitives. Each one gets a story in `stories/`.
-- **Component file names are PascalCase and match the exported component:** `components/NavButton.tsx` exports `NavButton`, with its story in `stories/NavButton.stories.tsx`. This applies to new components in `components/` and `_components/` folders. Exceptions: `components/ui/` (shadcn CLI output stays kebab-case), Next.js special files (`page.tsx`, `layout.tsx`, …), and non-component modules (`lib/`, `actions.ts`, `fonts.ts`). `data-slot` values stay kebab-case (`data-slot="nav-button"`).
+- Component file names are PascalCase and match the exported component (`components/NavButton.tsx` exports `NavButton`, story `stories/NavButton.stories.tsx`); ESLint enforces it. `components/ui/` (shadcn CLI output) stays kebab-case. `data-slot` values stay kebab-case (`data-slot="nav-button"`).
 - Data fetching happens in Server Components; server actions go in an `actions.ts` file next to the route that uses them.
 - `lib/` — framework-agnostic logic (validation, formatting, wizard step rules, helpers like `cn`), unit-tested with a `*.test.ts` file alongside.
+- New routes: add them to `e2e/routes.ts` so they get axe and web-vitals checks (a hook reminds you).
 
 ## Design system rules
 
 - Tokens live only in `app/globals.css` (CSS variables + `@theme inline`). Need a new colour, radius or font? Add a token there.
 - Use semantic utilities (`bg-primary`, `text-muted-foreground`, `border-border`). Never raw palette colours (`bg-zinc-500`), hex, or arbitrary colour values (`bg-[#fff]`) — ESLint fails on them.
-- **8px grid:** spacing and sizes (padding, margin, gap, width/height, position) are multiples of 8px = 0.5rem. Tailwind's scale is 0.25rem (4px) per step, so use even steps: `p-2` (8px), `gap-4` (16px), `h-10` (40px).
+- **8px grid:** spacing and sizes (padding, margin, gap, width/height, position) are multiples of 8px = 0.5rem, in Tailwind and in hand-written CSS (rem in multiples of 0.5rem). Tailwind's scale is 0.25rem (4px) per step, so use even steps: `p-2` (8px), `gap-4` (16px), `h-10` (40px).
 - 4px (0.25rem: `p-1`, `gap-1`) is allowed, but avoid it. Use it only where 8px is clearly too loose, e.g. an icon next to text or badge padding.
 - Nothing else off the grid: no odd steps above 1 (`p-3`, `h-5`), no half steps (`gap-1.5`), no arbitrary px (`w-[13px]`). ESLint fails on them.
-- Exception: 1–2px for borders, outlines, focus rings, shadows and other effects (`border`, `border-2`, `ring-2`, `h-px`).
-- Hand-written CSS uses rem in multiples of 0.5rem; px only for the 1–2px exceptions.
-- **No duplicated styling.** Before writing a class recipe, check `app/globals.css` for a utility that already does it, and use that. If the same recipe (3+ utilities doing one job) appears in a second place, extract it: a `@utility` in `app/globals.css` for a single-purpose style, or a `cva` variant for a component. Example: every focusable element uses `focus-ring`; never hand-write `outline-*` / `focus-visible:outline-*` classes.
-- **Transitions are 200ms.** `--default-transition-duration` in `app/globals.css` sets this for every `transition*` utility, so don't add `duration-*` classes. Hand-written CSS uses `var(--default-transition-duration)`.
+- Exception: 1–2px for borders, outlines, focus rings, shadows and other effects (`border`, `border-2`, `ring-2`, `h-px`); px is fine in hand-written CSS only for these.
+- **No duplicated styling.** Before writing a class recipe, check `app/globals.css` for a utility that already does it, and use that. If the same recipe (3+ utilities doing one job) appears in a second place, extract it: a `@utility` in `app/globals.css` for a single-purpose style, or a `cva` variant for a component. Example: every focusable element uses `focus-ring` (ESLint rejects hand-written outlines).
+- **Transitions are 200ms**, set by `--default-transition-duration` in `app/globals.css` (ESLint rejects `duration-*`). Hand-written CSS uses `var(--default-transition-duration)`.
 - `components/ui/` = shadcn primitives (Radix-based, added with `pnpm dlx shadcn@latest add <name>`). Compose them in `components/`. Extend primitives via `className` and `cva` variants; edit a file in `components/ui/` only if Radix behaviour itself must change, and say why in the PR.
-- Every new component needs stories in `stories/`: one per variant and per prop-driven state (disabled, loading, error, open, …). Each story must look different from every other one. No stories for hover/pressed/focus-visible/transitions, prop plumbing (`asChild`) or variant matrices; a human checks pseudo-states by interacting.
+- Every new component needs stories in `stories/`. The story rules are in `.claude/rules/stories.md` (read it before writing or editing a story).
 - Accessibility is a hard requirement: semantic HTML, labelled controls, keyboard support, visible focus. Story and e2e axe checks must pass.
-- New routes: add them to `e2e/routes.ts` so they get axe and web-vitals checks.
 
 ## Testing rules
 
 Each layer owns one job — don't duplicate coverage across them.
 
-- **Story `play` tests** (`pnpm test:stories`, real Chromium + axe): what a user does — clicks, keyboard, focus moves, open/closed, disabled blocks interaction, callbacks. Add `play` to an existing story; don't create a story just to host assertions, and don't assert computed styles or class names.
+- **Story `play` tests** (`pnpm test:stories`, real Chromium + axe): what a user does — clicks, keyboard, focus moves, open/closed, disabled blocks interaction, callbacks. Details in `.claude/rules/stories.md`.
 - **Unit tests** (`pnpm test`, jsdom): non-visual logic only — hooks, reducers, validation, formatting, wizard step rules. Don't render-and-click components here; that belongs in a story.
 - **E2E** (`pnpm e2e`): a few critical cross-page user flows plus page-level axe and web-vitals budgets. Don't test component variants here.
 
@@ -78,9 +73,7 @@ Each layer owns one job — don't duplicate coverage across them.
 
 ## Working rules
 
-- If a request has two plausible readings, state the one I'm taking in a sentence and ask before editing when the readings lead to different code. After a correction, re-read the whole original message instead of flipping to the opposite extreme.
-- Storybook `play` functions run on load, so the canvas must look right AFTER play: initial state as designed (e.g. disabled stays disabled), nothing focused, no focus rings. Use `fireEvent.click` instead of `userEvent.click` unless the test is about keyboard/focus (e.g. the Menu story). Never leave a story mutated by its own test.
-- When fixing a bug class (focus, state reset), grep ALL stories for it, not just the files I edited, and fix them in one pass.
-- Say plainly that I have not looked at it in Storybook/browser unless I did. Passing tests do not prove the first-load appearance is correct.
-- If the user names an element I can't find in the code, say so and ask. Don't guess.
+- If a request has two plausible readings, state the one you're taking in a sentence and ask before editing when the readings lead to different code. After a correction, re-read the whole original message instead of flipping to the opposite extreme.
+- Say plainly that you have not looked at it in Storybook/browser unless you did. Passing tests do not prove the first-load appearance is correct.
+- If the user names an element you can't find in the code, say so and ask. Don't guess.
 - Keep replies short: what changed, what's unverified, one question if needed.

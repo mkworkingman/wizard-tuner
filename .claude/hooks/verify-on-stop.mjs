@@ -1,6 +1,6 @@
-// Stop hook: fast gate (typecheck, lint, format check, unit tests). On failure, exit 2
-// so the output is fed back to Claude and it keeps working. Story tests (Chromium) are
-// too slow to run on every Stop; they stay in `pnpm verify` / CI.
+// Stop hook: the `pnpm verify` gate (typecheck, lint, format check, unit tests, and story
+// tests when UI code changed). On failure, exit 2 so the output is fed back to Claude and it
+// keeps working. Story tests run Chromium, so they only run when stories or components changed.
 import { spawnSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 
@@ -9,10 +9,19 @@ const input = JSON.parse(readFileSync(0, "utf8"))
 if (input.stop_hook_active) process.exit(0)
 
 // Nothing changed (e.g. Claude only answered a question): skip the gate.
-const status = spawnSync("git", ["status", "--porcelain"], { encoding: "utf8" })
-if (status.status === 0 && status.stdout.trim() === "") process.exit(0)
+const status = spawnSync("git", ["status", "--porcelain", "-uall"], { encoding: "utf8" })
+const changed = status.status === 0 ? status.stdout.trim() : ""
+if (status.status === 0 && changed === "") process.exit(0)
 
-for (const script of ["typecheck", "lint", "format:check", "test"]) {
+// Paths that affect what stories render: stories, components (incl. route-private
+// `_components`), global styles and Storybook config.
+const UI_CHANGED =
+  /(^|[\s/"])(stories|components|_components|\.storybook)\/|app\/globals\.css/m.test(changed)
+
+const scripts = ["typecheck", "lint", "format:check", "test"]
+if (UI_CHANGED) scripts.push("test:stories")
+
+for (const script of scripts) {
   const res = spawnSync("pnpm", ["-s", script], {
     encoding: "utf8",
     shell: process.platform === "win32",

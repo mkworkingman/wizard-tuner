@@ -104,31 +104,11 @@ matches closely, ask. Images: `next/image` with explicit size.
 
 ## 5. Stories (`stories/<Name>.stories.tsx`)
 
-Stories are for a human looking at Storybook. **A story earns its place only if it renders
-something visibly different that no other story + controls already shows.** Fewer is better.
+Read `.claude/rules/stories.md` first: it holds every story rule (which stories to write, `play`
+conventions, axe, what not to create). It's the single source; don't restate it here.
 
-- One story per variant, plus one per state that is set by props or data (disabled, loading,
-  error, empty, open, selected). Use `args` so controls work.
-- Long content: don't add a separate story if a real long label fits naturally into a variant
-  story (e.g. the variant whose real copy is longest). Real text, not "Lorem".
-- A composition story (the component as the design uses it, e.g. a menu of buttons) is good: it's
-  where a human hovers, presses and tabs through it.
-- `play` only for behaviour a user performs: click, keyboard path (Tab / Enter / Space / Esc /
-  arrows), focus moves, disabled blocks interaction, callbacks fire (`fn()` from
-  `storybook/test`). Query by role and name, like a user would. Put it on an existing story.
-
-**Don't create these** (they render the same as another story or test nothing a user sees):
-
-- Hover / pressed / focus-visible / transition stories. CSS pseudo-states are checked by hovering,
-  pressing and tabbing in the real story. No forced-pseudo-state addons or tricks.
-- Stories that only assert computed styles, token values, transition properties or class names.
-- Stories for prop plumbing that looks identical (`asChild`, `className` merge, `data-slot`, ref).
-- Variant × state matrix / "all variants" stories duplicating the individual stories.
-
-axe runs automatically and violations fail. Don't disable rules to make a story pass. If a
-violation seems unavoidable, ask. Don't add unit tests that render and click.
-
-**Before finishing:** open every story in Storybook (step 6). If two look the same, delete one.
+Use the confirmed states list from step 2 to pick the stories. Before finishing, open every story
+in Storybook (step 6).
 
 ## 6. Verify
 
