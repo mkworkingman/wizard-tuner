@@ -1,0 +1,4 @@
+#!/bin/sh
+# Pre-commit gate: the same fast checks as `pnpm verify` (typecheck, lint, format, unit + story tests).
+# Enabled by `pnpm install` via the `prepare` script (core.hooksPath). Bypass in an emergency: git commit --no-verify
+exec pnpm verify

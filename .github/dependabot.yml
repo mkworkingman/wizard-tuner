@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      storybook:
+        patterns: ["storybook", "@storybook/*", "eslint-plugin-storybook"]
+      testing:
+        patterns:
+          [
+            "vitest",
+            "@vitest/*",
+            "@playwright/test",
+            "playwright",
+            "@testing-library/*",
+            "@axe-core/*",
+          ]
+      next-react:
+        patterns: ["next", "eslint-config-next", "react", "react-dom", "@types/react*"]
+      lint-format:
+        patterns: ["eslint*", "typescript-eslint", "prettier*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

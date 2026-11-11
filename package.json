@@ -19,7 +19,8 @@
     "e2e": "playwright test",
     "lhci": "lhci autorun",
     "verify": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm test:stories",
-    "verify:full": "pnpm verify && pnpm build && pnpm e2e && pnpm lhci"
+    "verify:full": "pnpm verify && pnpm build && pnpm e2e && pnpm lhci",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
