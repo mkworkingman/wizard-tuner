@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { useAudioActions, useAudioStatus, useWorkletNode } from "@/store/audio-engine"
 
@@ -23,6 +23,7 @@ export function useBeatMachine() {
   const actions = useAudioActions()
   const status = useAudioStatus()
   const workletNode = useWorkletNode()
+  const [isPlaying, setIsPlaying] = useState(false)
   const currentStepRef = useRef(0)
   const stepIndicatorRef = useRef<HTMLDivElement>(null)
 
@@ -70,17 +71,20 @@ export function useBeatMachine() {
   const startAudio = async () => {
     await actions.runAudio()
     workletNode?.port.postMessage({ type: "START" })
+    setIsPlaying(true)
   }
 
   const stopAudio = () => {
     actions.stopAudio()
     workletNode?.port.postMessage({ type: "STOP" })
+    setIsPlaying(false)
   }
 
   return {
     startAudio,
     stopAudio,
     stepIndicatorRef,
+    isPlaying,
     isReady: status === "success",
     stepCount: GRID_LENGTH,
   }

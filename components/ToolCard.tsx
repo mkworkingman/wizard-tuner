@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 export type Tool = "tuner" | "ear-training" | "metronome" | "beat-machine" | "about"
 
 /**
- * Shared view-transition name for a tool. The home-page `NavButton` and the
+ * Shared view-transition name for a tool. The home-page `Button` and the
  * tool page's `ToolCard` both use it, so navigating morphs one into the other
  * (CSS in app/globals.css).
  */
@@ -39,7 +39,7 @@ export type ToolCardProps = React.ComponentProps<"section"> &
     title: string
   }
 
-/** Main surface of a tool page. Morphs from the matching home-page `NavButton`. */
+/** Main surface of a tool page. Morphs from the matching home-page `Button`. */
 export function ToolCard({ className, tool, title, children, ...props }: ToolCardProps) {
   const resolvedTool = tool ?? "tuner"
 

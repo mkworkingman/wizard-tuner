@@ -5,7 +5,7 @@ import type * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * Menu entry that leads to a tool. Each tool has its own colour family; the
+ * Tool-coloured button; as a link (`asChild`) it is a menu entry that leads to a tool. Each tool has its own colour family; the
  * surface matches the destination page's background.
  *
  * States: hover = vertical gradient into the tinted base; pressed (`:active`) =
@@ -17,13 +17,13 @@ import { cn } from "@/lib/utils"
  *
  * Colours come from the tool tokens in app/globals.css (dark theme only for now).
  */
-export const navButtonVariants = cva(
+export const buttonVariants = cva(
   [
     "flex min-h-14 w-full items-center justify-center rounded-control border-2 px-4 py-2",
     "text-center font-display text-xl leading-6 text-tool-foreground",
     "bg-linear-to-b transition motion-reduce:transition-none",
     "active:inset-shadow-pressed",
-    "focus-ring",
+    "focus-ring disabled:opacity-50",
   ],
   {
     variants: {
@@ -56,20 +56,21 @@ export const navButtonVariants = cva(
   },
 )
 
-export type NavButtonProps = React.ComponentProps<"a"> &
-  VariantProps<typeof navButtonVariants> & {
-    /** Render the child element (e.g. Next.js `<Link>`) instead of an `<a>`. */
+export type ButtonProps = React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    /** Render the child element (e.g. Next.js `<Link>`) instead of a `<button>`. */
     asChild?: boolean
   }
 
-export function NavButton({ className, tool, asChild = false, ...props }: NavButtonProps) {
-  const Comp = asChild ? Slot.Root : "a"
+export function Button({ className, tool, asChild = false, ...props }: ButtonProps) {
+  const Comp = asChild ? Slot.Root : "button"
 
   return (
     <Comp
-      data-slot="nav-button"
+      {...(asChild ? {} : { type: "button" as const })}
+      data-slot="button"
       data-tool={tool ?? "tuner"}
-      className={cn(navButtonVariants({ tool }), className)}
+      className={cn(buttonVariants({ tool }), className)}
       {...props}
     />
   )

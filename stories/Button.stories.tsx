@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 import { expect, userEvent, within } from "storybook/test"
 
-import { NavButton, type NavButtonProps } from "@/components/NavButton"
+import { Button, type ButtonProps } from "@/components/ui/button"
 
-type Tool = NonNullable<NavButtonProps["tool"]>
+type Tool = NonNullable<ButtonProps["tool"]>
 
 const TOOLS: { tool: Tool; label: string; href: string }[] = [
   { tool: "tuner", label: "Tuner", href: "/tuner" },
@@ -14,10 +14,9 @@ const TOOLS: { tool: Tool; label: string; href: string }[] = [
 ]
 
 const meta = {
-  title: "Components/NavButton",
-  component: NavButton,
+  title: "Components/Button",
+  component: Button,
   args: {
-    href: "/tuner",
     tool: "tuner",
     children: "Tuner",
   },
@@ -35,7 +34,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof NavButton>
+} satisfies Meta<typeof Button>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -44,19 +43,19 @@ export const Tuner: Story = {}
 
 /** The longest real label; it wraps to two lines and stays centred. */
 export const EarTraining: Story = {
-  args: { tool: "ear-training", href: "/ear-training", children: "Guess The Note/Interval/Chord" },
+  args: { tool: "ear-training", children: "Guess The Note/Interval/Chord" },
 }
 
 export const Metronome: Story = {
-  args: { tool: "metronome", href: "/metronome", children: "Metronome" },
+  args: { tool: "metronome", children: "Metronome" },
 }
 
 export const BeatMachine: Story = {
-  args: { tool: "beat-machine", href: "/beat-machine", children: "Beat Machine" },
+  args: { tool: "beat-machine", children: "Beat Machine" },
 }
 
 export const About: Story = {
-  args: { tool: "about", href: "/about", children: "About" },
+  args: { tool: "about", children: "About" },
 }
 
 /** The SuperTuner menu from Figma (336px wide). Hover, press and Tab through it to check states. */
@@ -67,9 +66,9 @@ export const Menu: Story = {
       <ul className="flex flex-col gap-4">
         {TOOLS.map(({ tool, label, href }) => (
           <li key={tool}>
-            <NavButton tool={tool} href={href}>
-              {label}
-            </NavButton>
+            <Button tool={tool} asChild>
+              <a href={href}>{label}</a>
+            </Button>
           </li>
         ))}
       </ul>

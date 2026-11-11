@@ -112,7 +112,7 @@
 }
 
 /*
- * NavButton <-> ToolCard morph (React <ViewTransition share="morph">, names from
+ * Button <-> ToolCard morph (React <ViewTransition share="morph">, names from
  * toolTransitionName() in components/ToolCard.tsx).
  * The group moves/resizes from the button's box to the card's box. The image-pair
  * draws a real border + surface at the group's live size, so the button itself

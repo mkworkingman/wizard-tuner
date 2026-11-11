@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useEffect, useRef, ViewTransition } from "react"
 
-import { NavButton } from "@/components/NavButton"
+import { Button } from "@/components/ui/button"
 import { type Tool, toolTransitionName } from "@/components/ToolCard"
 import { takeToolPath } from "@/lib/last-tool-path"
 
@@ -38,7 +38,7 @@ export function ToolNav() {
           <li key={tool}>
             {/* Shares its name with the tool page's card, so navigating morphs one into the other. */}
             <ViewTransition name={toolTransitionName(tool)} share="morph" default="none">
-              <NavButton tool={tool} asChild>
+              <Button tool={tool} asChild>
                 <Link
                   ref={(node) => {
                     if (node) links.current.set(href, node)
@@ -48,7 +48,7 @@ export function ToolNav() {
                 >
                   {label}
                 </Link>
-              </NavButton>
+              </Button>
             </ViewTransition>
           </li>
         ))}
