@@ -36,6 +36,17 @@ jobs:
       - name: Typecheck, lint, format, unit + story tests, build, e2e, Lighthouse
         run: pnpm verify:full
 
+      - name: Unit test coverage
+        run: pnpm test:coverage
+
+      - name: Upload coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 14
+
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --project unit",
+    "test:coverage": "vitest run --project unit --coverage",
     "test:watch": "vitest --project unit",
     "test:stories": "vitest run --project storybook --passWithNoTests",
     "storybook": "storybook dev -p 6006",

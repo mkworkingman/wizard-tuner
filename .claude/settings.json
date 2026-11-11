@@ -3,6 +3,16 @@
   "hooks": {
     "PreToolUse": [
       {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/remind-skills.mjs\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
@@ -64,6 +74,8 @@
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
+      "Edit(./.env*)",
+      "Write(./.env*)",
       "Edit(./pnpm-lock.yaml)",
       "Edit(./.next/**)",
       "Edit(./next-env.d.ts)"

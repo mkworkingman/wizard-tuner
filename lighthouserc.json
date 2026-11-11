@@ -3,7 +3,13 @@
     "collect": {
       "startServerCommand": "pnpm start --port 3200",
       "startServerReadyPattern": "Ready",
-      "url": ["http://localhost:3200/"],
+      "url": [
+        "http://localhost:3200/",
+        "http://localhost:3200/tuner",
+        "http://localhost:3200/ear-training",
+        "http://localhost:3200/metronome",
+        "http://localhost:3200/beat-machine"
+      ],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop"

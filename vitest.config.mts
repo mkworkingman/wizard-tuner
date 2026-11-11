@@ -10,6 +10,13 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   test: {
+    // Only used by `pnpm test:coverage` (unit project). No thresholds yet: add them once the baseline is known.
+    coverage: {
+      provider: "v8",
+      include: ["lib/**", "hooks/**", "store/**", "public/worklets/**"],
+      exclude: ["**/*.test.{ts,tsx}"],
+      reporter: ["text-summary", "html", "lcov"],
+    },
     projects: [
       {
         // Fast unit tests for utils, hooks and client components (jsdom).

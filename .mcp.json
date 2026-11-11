@@ -13,7 +13,7 @@
     },
     "shadcn": {
       "command": "cmd",
-      "args": ["/c", "npx", "-y", "shadcn@latest", "mcp"]
+      "args": ["/c", "npx", "-y", "shadcn@4.23.0", "mcp"]
     },
     "storybook": {
       "type": "http",
