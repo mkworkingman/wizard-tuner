@@ -7,10 +7,15 @@ import { NavButton } from "@/components/NavButton";
 import { type Tool, toolTransitionName } from "@/components/ToolCard";
 import { takeToolPath } from "@/lib/last-tool-path";
 
-const LINKS: { tool: Tool; label: string; href: "/tuner" | "/ear-training" | "/metronome" }[] = [
+const LINKS: {
+  tool: Tool;
+  label: string;
+  href: "/tuner" | "/ear-training" | "/metronome" | "/beat-machine";
+}[] = [
   { tool: "tuner", label: "Tuner", href: "/tuner" },
   { tool: "ear-training", label: "Guess The Note/Interval/Chord", href: "/ear-training" },
   { tool: "metronome", label: "Metronome", href: "/metronome" },
+  { tool: "beat-machine", label: "Beat Machine", href: "/beat-machine" },
 ];
 
 /**
