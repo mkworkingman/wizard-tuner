@@ -71,6 +71,11 @@ Each layer owns one job — don't duplicate coverage across them.
 
 - Use `type`, not `interface`. Only use `interface` to augment an existing global interface (e.g. `Window` inside `declare global`). ESLint enforces this; the global augmentation needs a one-line `eslint-disable-next-line @typescript-eslint/consistent-type-definitions` with a reason.
 
+## Audio
+
+- One `AudioContext` and one `AudioWorkletNode` per tab, shared by every tool. They live in `store/audio-engine.ts` and nowhere else. Tools never build their own node; new DSP is a new mode in `public/worklets/processor.js`.
+- Before touching `store/audio-engine.ts`, `public/worklets/processor.js` or any hook that posts to the node (e.g. `hooks/useBeatMachine.ts`), invoke the `audio-worklet` skill. Before changing any zustand store or a component that reads one, invoke the `zustand` skill.
+
 ## Working rules
 
 - If a request has two plausible readings, state the one I'm taking in a sentence and ask before editing when the readings lead to different code. After a correction, re-read the whole original message instead of flipping to the opposite extreme.
