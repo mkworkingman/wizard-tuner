@@ -1,10 +1,10 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import { ViewTransition } from "react";
-import type * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority"
+import { ViewTransition } from "react"
+import type * as React from "react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-export type Tool = "tuner" | "ear-training" | "metronome" | "beat-machine" | "about";
+export type Tool = "tuner" | "ear-training" | "metronome" | "beat-machine" | "about"
 
 /**
  * Shared view-transition name for a tool. The home-page `NavButton` and the
@@ -12,7 +12,7 @@ export type Tool = "tuner" | "ear-training" | "metronome" | "beat-machine" | "ab
  * (CSS in app/globals.css).
  */
 export function toolTransitionName(tool: Tool) {
-  return `${tool}-card`;
+  return `${tool}-card`
 }
 
 export const toolCardVariants = cva(
@@ -31,17 +31,17 @@ export const toolCardVariants = cva(
       tool: "tuner",
     },
   },
-);
+)
 
 export type ToolCardProps = React.ComponentProps<"section"> &
   VariantProps<typeof toolCardVariants> & {
     /** Page heading, rendered as the card's `<h1>`. */
-    title: string;
-  };
+    title: string
+  }
 
 /** Main surface of a tool page. Morphs from the matching home-page `NavButton`. */
 export function ToolCard({ className, tool, title, children, ...props }: ToolCardProps) {
-  const resolvedTool = tool ?? "tuner";
+  const resolvedTool = tool ?? "tuner"
 
   return (
     <ViewTransition name={toolTransitionName(resolvedTool)} share="morph" default="none">
@@ -56,5 +56,5 @@ export function ToolCard({ className, tool, title, children, ...props }: ToolCar
         {children}
       </section>
     </ViewTransition>
-  );
+  )
 }

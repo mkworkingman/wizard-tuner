@@ -1,21 +1,21 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import tseslint from "typescript-eslint";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-import betterTailwind from "eslint-plugin-better-tailwindcss";
-import storybook from "eslint-plugin-storybook";
-import prettier from "eslint-config-prettier/flat";
+import { defineConfig, globalIgnores } from "eslint/config"
+import nextVitals from "eslint-config-next/core-web-vitals"
+import tseslint from "typescript-eslint"
+import jsxA11y from "eslint-plugin-jsx-a11y"
+import betterTailwind from "eslint-plugin-better-tailwindcss"
+import storybook from "eslint-plugin-storybook"
+import prettier from "eslint-config-prettier/flat"
 
 // Raw Tailwind palette colours and arbitrary colour values bypass the design
 // tokens in app/globals.css. Use semantic tokens (bg-primary, text-muted-foreground…).
 const PALETTE =
-  "slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|black|white";
+  "slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|black|white"
 const COLOR_UTILS =
-  "bg|text|border|border-[xytrblse]|ring|ring-offset|outline|fill|stroke|from|via|to|shadow|decoration|accent|caret|divide|placeholder";
+  "bg|text|border|border-[xytrblse]|ring|ring-offset|outline|fill|stroke|from|via|to|shadow|decoration|accent|caret|divide|placeholder"
 
 // 8px grid (see AGENTS.md): utilities whose numeric steps are spacing/size.
 const SPACING_UTILS =
-  "p[xytrblse]?|m[xytrblse]?|gap(-[xy])?|space-[xy]|w|h|size|min-[wh]|max-[wh]|inset(-[xy])?|top|right|bottom|left|start|end|translate-[xy]|basis|indent|scroll-[mp][xytrblse]?";
+  "p[xytrblse]?|m[xytrblse]?|gap(-[xy])?|space-[xy]|w|h|size|min-[wh]|max-[wh]|inset(-[xy])?|top|right|bottom|left|start|end|translate-[xy]|basis|indent|scroll-[mp][xytrblse]?"
 
 export default defineConfig([
   ...nextVitals,
@@ -108,4 +108,4 @@ export default defineConfig([
     "coverage/**",
     "!.storybook",
   ]),
-]);
+])

@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, userEvent, within } from "storybook/test";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, within } from "storybook/test"
 
-import { NavButton, type NavButtonProps } from "@/components/NavButton";
+import { NavButton, type NavButtonProps } from "@/components/NavButton"
 
-type Tool = NonNullable<NavButtonProps["tool"]>;
+type Tool = NonNullable<NavButtonProps["tool"]>
 
 const TOOLS: { tool: Tool; label: string; href: string }[] = [
   { tool: "tuner", label: "Tuner", href: "/tuner" },
@@ -11,7 +11,7 @@ const TOOLS: { tool: Tool; label: string; href: string }[] = [
   { tool: "metronome", label: "Metronome", href: "/metronome" },
   { tool: "beat-machine", label: "Beat Machine", href: "/beat-machine" },
   { tool: "about", label: "About", href: "/about" },
-];
+]
 
 const meta = {
   title: "Components/NavButton",
@@ -35,29 +35,29 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof NavButton>;
+} satisfies Meta<typeof NavButton>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
-export const Tuner: Story = {};
+export const Tuner: Story = {}
 
 /** The longest real label; it wraps to two lines and stays centred. */
 export const EarTraining: Story = {
   args: { tool: "ear-training", href: "/ear-training", children: "Guess The Note/Interval/Chord" },
-};
+}
 
 export const Metronome: Story = {
   args: { tool: "metronome", href: "/metronome", children: "Metronome" },
-};
+}
 
 export const BeatMachine: Story = {
   args: { tool: "beat-machine", href: "/beat-machine", children: "Beat Machine" },
-};
+}
 
 export const About: Story = {
   args: { tool: "about", href: "/about", children: "About" },
-};
+}
 
 /** The SuperTuner menu from Figma (336px wide). Hover, press and Tab through it to check states. */
 export const Menu: Story = {
@@ -76,13 +76,13 @@ export const Menu: Story = {
     </nav>
   ),
   play: async ({ canvasElement }) => {
-    const nav = within(canvasElement).getByRole("navigation", { name: "Tools" });
-    const links = within(nav).getAllByRole("link");
-    await expect(links).toHaveLength(TOOLS.length);
+    const nav = within(canvasElement).getByRole("navigation", { name: "Tools" })
+    const links = within(nav).getAllByRole("link")
+    await expect(links).toHaveLength(TOOLS.length)
 
     for (const link of links) {
-      await userEvent.tab();
-      await expect(link).toHaveFocus();
+      await userEvent.tab()
+      await expect(link).toHaveFocus()
     }
   },
-};
+}

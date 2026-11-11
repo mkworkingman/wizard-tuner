@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useBeatMachine } from "@/hooks/useBeatMachine";
+import { useBeatMachine } from "@/hooks/useBeatMachine"
 
 export function BeatMachine() {
-  const { startAudio, stopAudio, stepIndicatorRef, isReady, stepCount } = useBeatMachine();
+  const { startAudio, stopAudio, stepIndicatorRef, isReady, stepCount } = useBeatMachine()
 
   return (
     <div className="flex flex-col gap-4">
@@ -38,5 +38,5 @@ export function BeatMachine() {
         ))}
       </div>
     </div>
-  );
+  )
 }

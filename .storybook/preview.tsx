@@ -1,10 +1,10 @@
-import type { Preview } from "@storybook/nextjs-vite";
+import type { Preview } from "@storybook/nextjs-vite"
 
-import { fontVariables } from "../app/fonts";
-import "../app/globals.css";
+import { fontVariables } from "../app/fonts"
+import "../app/globals.css"
 
 // Same font CSS variables the root layout sets on <html>.
-document.documentElement.classList.add(...fontVariables.split(" "));
+document.documentElement.classList.add(...fontVariables.split(" "))
 
 const preview: Preview = {
   parameters: {
@@ -28,6 +28,6 @@ const preview: Preview = {
       </div>
     ),
   ],
-};
+}
 
-export default preview;
+export default preview

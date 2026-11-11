@@ -1,4 +1,4 @@
-import { ToolNav } from "./_components/ToolNav";
+import { ToolNav } from "./_components/ToolNav"
 
 export default function Home() {
   return (
@@ -6,5 +6,5 @@ export default function Home() {
       <h1 className="sr-only">Wizard Tuner</h1>
       <ToolNav />
     </main>
-  );
+  )
 }

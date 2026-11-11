@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useEffect, useRef } from "react"
 
-import { rememberToolPath } from "@/lib/last-tool-path";
+import { rememberToolPath } from "@/lib/last-tool-path"
 
 /**
  * "Back home" link of the tool pages. Takes focus whenever a tool page is shown,
@@ -12,15 +12,15 @@ import { rememberToolPath } from "@/lib/last-tool-path";
  * home can return focus to the link that led here.
  */
 export function BackHomeLink() {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const pathname = usePathname();
+  const ref = useRef<HTMLAnchorElement>(null)
+  const pathname = usePathname()
 
   // Re-runs on every tool page change, and when the route is revealed again
   // (Cache Components keeps it in a hidden <Activity> instead of unmounting).
   useEffect(() => {
-    rememberToolPath(pathname);
-    ref.current?.focus();
-  }, [pathname]);
+    rememberToolPath(pathname)
+    ref.current?.focus()
+  }, [pathname])
 
   return (
     <Link
@@ -32,5 +32,5 @@ export function BackHomeLink() {
     >
       ← Back home
     </Link>
-  );
+  )
 }

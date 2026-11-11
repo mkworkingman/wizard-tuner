@@ -1,35 +1,35 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useEffect, useRef, ViewTransition } from "react";
+import Link from "next/link"
+import { useEffect, useRef, ViewTransition } from "react"
 
-import { NavButton } from "@/components/NavButton";
-import { type Tool, toolTransitionName } from "@/components/ToolCard";
-import { takeToolPath } from "@/lib/last-tool-path";
+import { NavButton } from "@/components/NavButton"
+import { type Tool, toolTransitionName } from "@/components/ToolCard"
+import { takeToolPath } from "@/lib/last-tool-path"
 
 const LINKS: {
-  tool: Tool;
-  label: string;
-  href: "/tuner" | "/ear-training" | "/metronome" | "/beat-machine";
+  tool: Tool
+  label: string
+  href: "/tuner" | "/ear-training" | "/metronome" | "/beat-machine"
 }[] = [
   { tool: "tuner", label: "Tuner", href: "/tuner" },
   { tool: "ear-training", label: "Guess The Note/Interval/Chord", href: "/ear-training" },
   { tool: "metronome", label: "Metronome", href: "/metronome" },
   { tool: "beat-machine", label: "Beat Machine", href: "/beat-machine" },
-];
+]
 
 /**
  * Home-page menu of tools. When the user comes back from a tool page, focus
  * returns to the link that leads to it.
  */
 export function ToolNav() {
-  const links = useRef(new Map<string, HTMLAnchorElement>());
+  const links = useRef(new Map<string, HTMLAnchorElement>())
 
   // Re-runs when home is revealed again (Cache Components keeps it in a hidden <Activity>).
   useEffect(() => {
-    const path = takeToolPath();
-    if (path) links.current.get(path)?.focus();
-  }, []);
+    const path = takeToolPath()
+    if (path) links.current.get(path)?.focus()
+  }, [])
 
   return (
     <nav aria-label="Tools" className="w-84 max-w-full">
@@ -41,8 +41,8 @@ export function ToolNav() {
               <NavButton tool={tool} asChild>
                 <Link
                   ref={(node) => {
-                    if (node) links.current.set(href, node);
-                    else links.current.delete(href);
+                    if (node) links.current.set(href, node)
+                    else links.current.delete(href)
                   }}
                   href={href}
                 >
@@ -54,5 +54,5 @@ export function ToolNav() {
         ))}
       </ul>
     </nav>
-  );
+  )
 }

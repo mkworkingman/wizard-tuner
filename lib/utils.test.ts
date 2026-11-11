@@ -1,13 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 describe("cn", () => {
   it("merges conflicting Tailwind classes, last one wins", () => {
-    expect(cn("px-2 py-1", "px-4")).toBe("py-1 px-4");
-  });
+    expect(cn("px-2 py-1", "px-4")).toBe("py-1 px-4")
+  })
 
   it("drops falsy values", () => {
-    expect(cn("flex", false, null, undefined, "p-2")).toBe("flex p-2");
-  });
-});
+    expect(cn("flex", false, null, undefined, "p-2")).toBe("flex p-2")
+  })
+})

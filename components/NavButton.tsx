@@ -1,8 +1,8 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import { Slot } from "radix-ui";
-import type * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority"
+import { Slot } from "radix-ui"
+import type * as React from "react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 /**
  * Menu entry that leads to a tool. Each tool has its own colour family; the
@@ -57,16 +57,16 @@ export const navButtonVariants = cva(
       tool: "tuner",
     },
   },
-);
+)
 
 export type NavButtonProps = React.ComponentProps<"a"> &
   VariantProps<typeof navButtonVariants> & {
     /** Render the child element (e.g. Next.js `<Link>`) instead of an `<a>`. */
-    asChild?: boolean;
-  };
+    asChild?: boolean
+  }
 
 export function NavButton({ className, tool, asChild = false, ...props }: NavButtonProps) {
-  const Comp = asChild ? Slot.Root : "a";
+  const Comp = asChild ? Slot.Root : "a"
 
   return (
     <Comp
@@ -75,5 +75,5 @@ export function NavButton({ className, tool, asChild = false, ...props }: NavBut
       className={cn(navButtonVariants({ tool }), className)}
       {...props}
     />
-  );
+  )
 }

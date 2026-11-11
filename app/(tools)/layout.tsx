@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from "next/link"
 
-import { BackHomeLink } from "./_components/BackHomeLink";
+import { BackHomeLink } from "./_components/BackHomeLink"
 
 /**
  * Shared shell for the tool pages. The `(tools)` route group adds no URL segment.
@@ -35,5 +35,5 @@ export default function ToolsLayout({ children }: LayoutProps<"/">) {
         Wizard Tuner
       </footer>
     </div>
-  );
+  )
 }
