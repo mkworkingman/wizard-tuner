@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
-import { expect, fn, userEvent } from "storybook/test"
+import { expect, fireEvent, fn } from "storybook/test"
 
 import { BeatMachineView } from "@/app/(tools)/beat-machine/_components/BeatMachineView"
 
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>
 
 export const Stopped: Story = {
   play: async ({ canvas, args }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Start" }))
+    await fireEvent.click(canvas.getByRole("button", { name: "Start" }))
     await expect(args.onStart).toHaveBeenCalledOnce()
     await expect(args.onStop).not.toHaveBeenCalled()
   },
@@ -29,7 +29,7 @@ export const Stopped: Story = {
 export const Playing: Story = {
   args: { isPlaying: true, activeStep: 4 },
   play: async ({ canvas, args }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Stop" }))
+    await fireEvent.click(canvas.getByRole("button", { name: "Stop" }))
     await expect(args.onStop).toHaveBeenCalledOnce()
     await expect(args.onStart).not.toHaveBeenCalled()
   },
@@ -40,7 +40,7 @@ export const NotReady: Story = {
   play: async ({ canvas, args }) => {
     const button = canvas.getByRole("button", { name: "Start" })
     await expect(button).toBeDisabled()
-    await userEvent.click(button)
+    await fireEvent.click(button)
     await expect(args.onStart).not.toHaveBeenCalled()
   },
 }

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { useState } from "react"
+import { expect, fireEvent, fn, userEvent, within } from "storybook/test"
 
 import { Button, type ButtonProps } from "@/components/ui/button"
 
@@ -56,6 +57,49 @@ export const BeatMachine: Story = {
 
 export const About: Story = {
   args: { tool: "about", children: "About" },
+}
+
+function DisabledDemo({ onClick, ...props }: ButtonProps) {
+  const [disabled, setDisabled] = useState(true)
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Button {...props} disabled={disabled} onClick={onClick} />
+      <label className="flex items-center gap-2 text-foreground">
+        <input
+          type="checkbox"
+          checked={disabled}
+          onChange={(e) => {
+            setDisabled(e.target.checked)
+          }}
+        />
+        Disabled
+      </label>
+    </div>
+  )
+}
+
+/** Dimmed, no hover/pressed styling, and not clickable. Toggle the checkbox to switch (instantly) between states. */
+export const Disabled: Story = {
+  args: { onClick: fn() },
+  render: (args) => <DisabledDemo {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole("button", { name: "Tuner" })
+    const checkbox = canvas.getByRole("checkbox", { name: "Disabled" })
+
+    await expect(button).toBeDisabled()
+    await fireEvent.click(button)
+    await expect(args.onClick).not.toHaveBeenCalled()
+
+    await fireEvent.click(checkbox)
+    await expect(button).toBeEnabled()
+    await fireEvent.click(button)
+    await expect(args.onClick).toHaveBeenCalledTimes(1)
+    // Restore the initial state: the story must be left disabled.
+    await fireEvent.click(checkbox)
+    await expect(button).toBeDisabled()
+  },
 }
 
 /** The SuperTuner menu from Figma (336px wide). Hover, press and Tab through it to check states. */

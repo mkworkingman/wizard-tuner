@@ -21,5 +21,7 @@ export const Default: Story = {
     await expect(link).toHaveFocus()
     await expect(link).toHaveAttribute("href", "/")
     await expect(takeToolPath()).toBe("/tuner")
+    // Verified; don't leave the link focused in the Storybook canvas.
+    link.blur()
   },
 }

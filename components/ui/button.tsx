@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils"
  * surface matches the destination page's background.
  *
  * States: hover = vertical gradient into the tinted base; pressed (`:active`) =
- * inset shading.
+ * inset shading; disabled = dimmed, no hover/pressed styling. Hover and pressed
+ * animate; opacity is not in the transition list, so switching disabled <-> enabled
+ * is instant.
  *
- * The gradient is always on, flat at rest (both stops = surface). Hover only moves
- * the bottom stop; Tailwind registers --tw-gradient-to as a <color>, so it animates.
- * (background-image itself can't transition.)
+ * The gradient is always on, flat at rest (both stops = surface).
  *
  * Colours come from the tool tokens in app/globals.css (dark theme only for now).
  */
@@ -21,32 +21,33 @@ export const buttonVariants = cva(
   [
     "flex min-h-14 w-full items-center justify-center rounded-control border-2 px-4 py-2",
     "text-center font-display text-xl leading-6 text-tool-foreground",
-    "bg-linear-to-b transition motion-reduce:transition-none",
-    "active:inset-shadow-pressed",
-    "focus-ring disabled:opacity-50",
+    "bg-linear-to-b motion-reduce:transition-none",
+    "transition-[color,background-color,border-color,box-shadow,--tw-gradient-from,--tw-gradient-to]",
+    "not-disabled:active:inset-shadow-pressed",
+    "focus-ring disabled:cursor-not-allowed disabled:opacity-50",
   ],
   {
     variants: {
       tool: {
         tuner: [
           "border-tool-tuner bg-tool-tuner-surface",
-          "from-tool-tuner-surface to-tool-tuner-surface hover:to-tool-tuner-hover",
+          "from-tool-tuner-surface to-tool-tuner-surface not-disabled:hover:to-tool-tuner-hover",
         ],
         "ear-training": [
           "border-tool-ear-training bg-tool-ear-training-surface",
-          "from-tool-ear-training-surface to-tool-ear-training-surface hover:to-tool-ear-training-hover",
+          "from-tool-ear-training-surface to-tool-ear-training-surface not-disabled:hover:to-tool-ear-training-hover",
         ],
         metronome: [
           "border-tool-metronome bg-tool-metronome-surface",
-          "from-tool-metronome-surface to-tool-metronome-surface hover:to-tool-metronome-hover",
+          "from-tool-metronome-surface to-tool-metronome-surface not-disabled:hover:to-tool-metronome-hover",
         ],
         "beat-machine": [
           "border-tool-beat-machine bg-tool-beat-machine-surface",
-          "from-tool-beat-machine-surface to-tool-beat-machine-surface hover:to-tool-beat-machine-hover",
+          "from-tool-beat-machine-surface to-tool-beat-machine-surface not-disabled:hover:to-tool-beat-machine-hover",
         ],
         about: [
           "border-tool-about bg-tool-about-surface",
-          "from-tool-about-surface to-tool-about-surface hover:to-tool-about-hover",
+          "from-tool-about-surface to-tool-about-surface not-disabled:hover:to-tool-about-hover",
         ],
       },
     },
