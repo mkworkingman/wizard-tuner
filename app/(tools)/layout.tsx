@@ -15,10 +15,7 @@ export default function ToolsLayout({ children }: LayoutProps<"/">) {
         className="flex items-center border-b-2 border-border bg-chrome px-4 py-4"
         style={{ viewTransitionName: "tools-header" }}
       >
-        <Link
-          href="/"
-          className="font-display text-2xl outline-foreground outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
-        >
+        <Link href="/" className="font-display text-2xl focus-ring">
           Wizard Tuner
         </Link>
       </header>

@@ -12,7 +12,7 @@ export function BeatMachine() {
           type="button"
           onClick={() => void startAudio()}
           disabled={!isReady}
-          className="rounded-control border-2 border-tool-beat-machine px-4 py-2 outline-foreground focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50"
+          className="rounded-control border-2 border-tool-beat-machine px-4 py-2 focus-ring disabled:opacity-50"
         >
           Start
         </button>
@@ -20,7 +20,7 @@ export function BeatMachine() {
           type="button"
           onClick={stopAudio}
           disabled={!isReady}
-          className="rounded-control border-2 border-tool-beat-machine px-4 py-2 outline-foreground focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50"
+          className="rounded-control border-2 border-tool-beat-machine px-4 py-2 focus-ring disabled:opacity-50"
         >
           Stop
         </button>

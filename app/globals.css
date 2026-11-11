@@ -95,6 +95,23 @@
 }
 
 /*
+ * The one focus indicator for every interactive element (links, buttons, …).
+ * Outline, not ring: ring is a box-shadow, which `transition` animates. The colour
+ * is set at rest so it never changes; style/width/offset aren't transitioned, so
+ * the indicator appears instantly.
+ */
+@utility focus-ring {
+  outline-color: var(--color-foreground);
+  outline-style: none;
+
+  &:focus-visible {
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+}
+
+/*
  * NavButton <-> ToolCard morph (React <ViewTransition share="morph">, names from
  * toolTransitionName() in components/ToolCard.tsx).
  * The group moves/resizes from the button's box to the card's box. The image-pair

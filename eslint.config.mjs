@@ -69,6 +69,12 @@ export default defineConfig([
               message:
                 "Off the 8px grid — use even steps (p-2 = 8px, p-4 = 16px); p-1 (4px) only if needed.",
             },
+            // One shared focus indicator (see "No duplicated styling" in AGENTS.md).
+            {
+              pattern: "(^|:)(focus|focus-visible):!?outline-.*$|^!?outline-none$",
+              message:
+                "Hand-written focus outline — use the shared `focus-ring` utility from app/globals.css.",
+            },
             // No arbitrary px, except 1–2px effects (borders, outlines, rings, shadows, blur).
             {
               pattern:
