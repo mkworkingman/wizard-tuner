@@ -1,26 +1,15 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useEffect, useRef } from "react"
 
-import { rememberToolPath } from "@/lib/last-tool-path"
+import { useFocusOnToolPage } from "@/hooks/useFocusOnToolPage"
 
 /**
  * "Back home" link of the tool pages. Takes focus whenever a tool page is shown,
- * so keyboard and screen-reader users start from it, and records the page so
- * home can return focus to the link that led here.
+ * so keyboard and screen-reader users start from it.
  */
 export function BackHomeLink() {
-  const ref = useRef<HTMLAnchorElement>(null)
-  const pathname = usePathname()
-
-  // Re-runs on every tool page change, and when the route is revealed again
-  // (Cache Components keeps it in a hidden <Activity> instead of unmounting).
-  useEffect(() => {
-    rememberToolPath(pathname)
-    ref.current?.focus()
-  }, [pathname])
+  const ref = useFocusOnToolPage<HTMLAnchorElement>()
 
   return (
     <Link
