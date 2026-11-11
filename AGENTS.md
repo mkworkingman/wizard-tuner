@@ -66,3 +66,12 @@ Each layer owns one job — don't duplicate coverage across them.
 - **Story `play` tests** (`pnpm test:stories`, real Chromium + axe): what a user does — clicks, keyboard, focus moves, open/closed, disabled blocks interaction, callbacks. Add `play` to an existing story; don't create a story just to host assertions, and don't assert computed styles or class names.
 - **Unit tests** (`pnpm test`, jsdom): non-visual logic only — hooks, reducers, validation, formatting, wizard step rules. Don't render-and-click components here; that belongs in a story.
 - **E2E** (`pnpm e2e`): a few critical cross-page user flows plus page-level axe and web-vitals budgets. Don't test component variants here.
+
+## Working rules
+
+- If a request has two plausible readings, state the one I'm taking in a sentence and ask before editing when the readings lead to different code. After a correction, re-read the whole original message instead of flipping to the opposite extreme.
+- Storybook `play` functions run on load, so the canvas must look right AFTER play: initial state as designed (e.g. disabled stays disabled), nothing focused, no focus rings. Use `fireEvent.click` instead of `userEvent.click` unless the test is about keyboard/focus (e.g. the Menu story). Never leave a story mutated by its own test.
+- When fixing a bug class (focus, state reset), grep ALL stories for it, not just the files I edited, and fix them in one pass.
+- Say plainly that I have not looked at it in Storybook/browser unless I did. Passing tests do not prove the first-load appearance is correct.
+- If the user names an element I can't find in the code, say so and ask. Don't guess.
+- Keep replies short: what changed, what's unverified, one question if needed.
