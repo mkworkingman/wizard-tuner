@@ -26,6 +26,14 @@ export function useBeatMachine() {
   const [isPlaying, setIsPlaying] = useState(false)
   const currentStepRef = useRef(0)
   const stepIndicatorRef = useRef<HTMLDivElement>(null)
+  const isMountedRef = useRef(false)
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
     void actions.initAudio()
@@ -70,6 +78,11 @@ export function useBeatMachine() {
 
   const startAudio = async () => {
     await actions.runAudio()
+    if (!isMountedRef.current) {
+      // Left the page while resuming: runAudio set isRunning after our cleanup.
+      actions.stopAudio()
+      return
+    }
     workletNode?.port.postMessage({ type: "START" })
     setIsPlaying(true)
   }
@@ -84,7 +97,7 @@ export function useBeatMachine() {
     startAudio,
     stopAudio,
     stepIndicatorRef,
-    isPlaying,
+    isPlaying: isPlaying && status === "success",
     isReady: status === "success",
     stepCount: GRID_LENGTH,
   }

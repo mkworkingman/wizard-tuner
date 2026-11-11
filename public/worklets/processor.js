@@ -29,7 +29,14 @@ const INSTRUMENT_CONFIG = {
   accent: { freq: 880, gain: 0.1 },
 }
 
+// Upper bounds: a huge bpm or steps-per-beat makes a step shorter than one
+// sample, and then TICK is posted for every sample and floods the port.
+const MAX_BPM = 400
+const MAX_STEPS_PER_BEAT = 32
+
 const isPositiveNumber = (n) => typeof n === "number" && Number.isFinite(n) && n > 0
+const isStepsPerBeat = (n) => Number.isInteger(n) && n > 0 && n <= MAX_STEPS_PER_BEAT
+const isInstrument = (name) => Object.hasOwn(INSTRUMENT_CONFIG, name)
 const isStepIndex = (n, length) => Number.isInteger(n) && n >= 0 && n < length
 
 class AudioProcessor extends AudioWorkletProcessor {
@@ -88,18 +95,18 @@ class AudioProcessor extends AudioWorkletProcessor {
         break
 
       case "SET_BPM":
-        if (isPositiveNumber(payload)) this.bpm = payload
+        if (isPositiveNumber(payload)) this.bpm = Math.min(payload, MAX_BPM)
         break
 
       case "INIT_GRID": {
         if (!payload || typeof payload.grid !== "object" || payload.grid === null) break
         const { grid, gridLength, stepsPerBeat } = payload
         if (!Number.isInteger(gridLength) || gridLength <= 0) break
-        if (!Number.isInteger(stepsPerBeat) || stepsPerBeat <= 0) break
+        if (!isStepsPerBeat(stepsPerBeat)) break
 
         const cleanGrid = {}
         for (const instrument in grid) {
-          if (INSTRUMENT_CONFIG[instrument] && Array.isArray(grid[instrument])) {
+          if (isInstrument(instrument) && Array.isArray(grid[instrument])) {
             cleanGrid[instrument] = grid[instrument].slice(0, gridLength)
           }
         }
@@ -114,13 +121,13 @@ class AudioProcessor extends AudioWorkletProcessor {
       case "UPDATE_GRID": {
         if (!payload) break
         const { instrument, step, value } = payload
-        if (!INSTRUMENT_CONFIG[instrument] || !isStepIndex(step, this.totalSteps)) break
+        if (!isInstrument(instrument) || !isStepIndex(step, this.totalSteps)) break
         ;(this.grid[instrument] ??= [])[step] = value
         break
       }
 
       case "UPDATE_SPB":
-        if (Number.isInteger(payload) && payload > 0) this.stepsPerBeat = payload
+        if (isStepsPerBeat(payload)) this.stepsPerBeat = payload
         break
     }
   }

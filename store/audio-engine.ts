@@ -53,8 +53,8 @@ const useAudioEngineStore = create<AudioEngineState>()((set, get) => ({
 
           workletNode.addEventListener("processorerror", (e) => {
             console.error("Worklet processor crashed:", e)
+            // Keep initPromise: a retry must not report success with this dead node.
             set({ status: "failure", isRunning: false })
-            initPromise = null
           })
         }
 
