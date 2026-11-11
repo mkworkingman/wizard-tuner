@@ -26,6 +26,8 @@ const COLLECTOR = `
 `
 
 declare global {
+  // Augmenting the global Window requires an interface (declaration merging).
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
     __vitals: Partial<Record<string, number>>
   }

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-interface AudioEngineState {
+type AudioEngineState = {
   ctx: AudioContext | null
   workletNode: AudioWorkletNode | null
   isRunning: boolean

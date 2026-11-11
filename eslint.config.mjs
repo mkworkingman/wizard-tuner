@@ -34,6 +34,11 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
 
+  // `type` over `interface`; interfaces only to augment globals (use an eslint-disable comment there).
+  {
+    rules: { "@typescript-eslint/consistent-type-definitions": ["error", "type"] },
+  },
+
   // jsx-a11y: eslint-config-next registers the plugin but enables only a few
   // rules (mostly as warnings). Turn on the full strict set as errors.
   {

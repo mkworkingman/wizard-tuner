@@ -4,7 +4,7 @@ import { StepGrid } from "./StepGrid"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-export interface BeatMachineViewProps {
+export type BeatMachineViewProps = {
   isPlaying: boolean
   isReady: boolean
   stepCount: number

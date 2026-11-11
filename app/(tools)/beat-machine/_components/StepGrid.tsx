@@ -1,6 +1,6 @@
 import type * as React from "react"
 
-export interface StepGridProps {
+export type StepGridProps = {
   stepCount: number
   /** Marks one step as playing. Static rendering only: at runtime the hook sets `data-active` through `ref`. */
   activeStep?: number

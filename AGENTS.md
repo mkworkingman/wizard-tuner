@@ -67,6 +67,10 @@ Each layer owns one job — don't duplicate coverage across them.
 - **Unit tests** (`pnpm test`, jsdom): non-visual logic only — hooks, reducers, validation, formatting, wizard step rules. Don't render-and-click components here; that belongs in a story.
 - **E2E** (`pnpm e2e`): a few critical cross-page user flows plus page-level axe and web-vitals budgets. Don't test component variants here.
 
+## TypeScript
+
+- Use `type`, not `interface`. Only use `interface` to augment an existing global interface (e.g. `Window` inside `declare global`). ESLint enforces this; the global augmentation needs a one-line `eslint-disable-next-line @typescript-eslint/consistent-type-definitions` with a reason.
+
 ## Working rules
 
 - If a request has two plausible readings, state the one I'm taking in a sentence and ask before editing when the readings lead to different code. After a correction, re-read the whole original message instead of flipping to the opposite extreme.
