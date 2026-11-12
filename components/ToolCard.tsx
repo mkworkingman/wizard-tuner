@@ -16,7 +16,7 @@ export function toolTransitionName(tool: Tool) {
 }
 
 export const toolCardVariants = cva(
-  "flex flex-col gap-4 rounded-control border-2 p-8 text-tool-foreground",
+  "flex flex-col gap-4 rounded-control border-2 p-4 text-tool-foreground md:p-8",
   {
     variants: {
       tool: {
@@ -52,7 +52,7 @@ export function ToolCard({ className, tool, title, children, ...props }: ToolCar
         className={cn(toolCardVariants({ tool }), className)}
         {...props}
       >
-        <h1 className="font-display text-3xl">{title}</h1>
+        <h1 className="font-display text-2xl md:text-3xl">{title}</h1>
         {children}
       </section>
     </ViewTransition>
