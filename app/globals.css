@@ -13,6 +13,10 @@
   --background: oklch(0.178 0 0); /* #111 */
   --foreground: oklch(0.949 0 0); /* #eee */
   --muted-foreground: oklch(0.75 0 0);
+  --muted: oklch(0.26 0 0); /* hover surface */
+  --popover: oklch(0.21 0 0);
+  --popover-foreground: oklch(0.949 0 0);
+  --ring: oklch(0.949 0 0);
 
   /* Tool-page header/footer. */
   --chrome: oklch(0.21 0 0);
@@ -43,6 +47,10 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-ring: var(--ring);
   --color-chrome: var(--chrome);
   --color-border: var(--border);
   --color-tool-foreground: var(--tool-foreground);
@@ -108,6 +116,21 @@
     outline-style: solid;
     outline-width: 2px;
     outline-offset: 2px;
+  }
+}
+
+/* A slanted 2px rule on the leading edge of an element (the menu separators). */
+@utility slant-divider {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 2px;
+    background: var(--color-border);
+    transform: skewX(-16deg);
   }
 }
 

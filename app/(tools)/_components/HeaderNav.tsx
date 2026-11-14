@@ -1,34 +1,49 @@
 "use client"
 
-import Link from "next/link"
+import { MenuIcon } from "lucide-react"
 import { usePathname } from "next/navigation"
+import { useState } from "react"
 
-const LINKS = [
-  { label: "Tuner", href: "/tuner" },
-  { label: "Ear Training", href: "/ear-training" },
-  { label: "Metronome", href: "/metronome" },
-  { label: "Beat Machine", href: "/beat-machine" },
-] as const
+import { NavLinks } from "@/components/NavLinks"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
-/** Links between the tool pages, shown in the tool-page header. Marks the current page. */
+/**
+ * Tool-page header navigation. From `md` up: the links as a bar. Below `md`: a hamburger that
+ * opens a side sheet with the same links.
+ */
 export function HeaderNav() {
   const pathname = usePathname()
+  // Remember where it was opened, so navigating to another page closes it.
+  const [openAt, setOpenAt] = useState<string | null>(null)
 
   return (
-    <nav aria-label="Tools">
-      <ul className="flex flex-wrap gap-x-4">
-        {LINKS.map(({ label, href }) => (
-          <li key={href}>
-            <Link
-              href={href}
-              aria-current={pathname === href ? "page" : undefined}
-              className="flex min-h-10 items-center text-sm text-muted-foreground underline-offset-4 focus-ring hover:text-foreground hover:underline aria-[current=page]:text-foreground aria-[current=page]:underline md:text-base"
-            >
-              {label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <>
+      <NavLinks className="max-md:hidden" />
+
+      <Sheet
+        open={openAt === pathname}
+        onOpenChange={(open) => {
+          setOpenAt(open ? pathname : null)
+        }}
+      >
+        <SheetTrigger
+          aria-label="Menu"
+          className="flex size-10 items-center justify-center rounded-control text-muted-foreground focus-ring hover:text-foreground md:hidden"
+        >
+          <MenuIcon aria-hidden className="size-6" />
+        </SheetTrigger>
+        <SheetContent side="right" className="bg-chrome">
+          <SheetTitle className="px-4 pt-4 font-display text-xl">Wizard Tuner</SheetTitle>
+          <SheetDescription className="sr-only">Choose a tool</SheetDescription>
+          <NavLinks orientation="vertical" />
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }

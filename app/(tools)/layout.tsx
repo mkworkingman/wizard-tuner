@@ -13,7 +13,7 @@ export default function ToolsLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex flex-1 flex-col">
       <header
-        className="flex flex-col gap-2 border-b-2 border-border bg-chrome px-4 py-2 md:flex-row md:items-center md:justify-between md:py-4"
+        className="relative flex items-center justify-between border-b-2 border-border bg-chrome px-4 py-2 md:py-4"
         style={{ viewTransitionName: "tools-header" }}
       >
         <Link href="/" className="w-fit font-display text-xl focus-ring md:text-2xl">
