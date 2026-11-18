@@ -21,7 +21,8 @@ type Processor = {
   isPlaying: boolean
   activeVoices: unknown[]
   currentStep: number
-  pitchBufferFill: number
+  pitchRingFill: number
+  pitchConfig: Record<string, number>
 }
 
 let Ctor: new () => Processor
@@ -243,29 +244,106 @@ describe("audio processor", () => {
       expect(proc.stepsPerBeat).toBe(1)
       expect(proc.currentStep).toBe(0)
       expect(proc.activeVoices).toHaveLength(0)
-      expect(proc.pitchBufferFill).toBe(0)
+      expect(proc.pitchRingFill).toBe(0)
     })
   })
 
   describe("pitch mode", () => {
-    it("posts a 100ms chunk, transfers the buffer and keeps the output silent", () => {
-      send(proc, { type: "SET_MODE", payload: "pitch" })
+    const wasmBytes = () => {
+      const file = readFileSync(path.join(__dirname, "pitch-detector.wasm"))
+      return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength)
+    }
+
+    const sine =
+      (freq: number, amplitude = 0.5) =>
+      (i: number) =>
+        amplitude * Math.sin((2 * Math.PI * freq * i) / SAMPLE_RATE)
+
+    // Feeds `seconds` of a signal through process(), one render quantum at a time.
+    function feed(p: Processor, signal: (i: number) => number, seconds: number) {
+      const quanta = Math.ceil((seconds * SAMPLE_RATE) / QUANTUM)
+      for (let q = 0; q < quanta; q++) {
+        const input = Float32Array.from({ length: QUANTUM }, (_, i) => signal(q * QUANTUM + i))
+        expect(runQuantum(p, input).output.every((s) => s === 0)).toBe(true) // no mic echo
+      }
+    }
+
+    const lastPitch = (p: Processor) =>
+      ofType(p, "PITCH").at(-1)?.payload as { freq: number; clarity: number; rms: number }
+
+    async function loadWasm(p: Processor) {
+      send(p, { type: "LOAD_WASM", payload: wasmBytes() })
+      await vi.waitFor(() => {
+        expect(ofType(p, "WASM_READY")).toHaveLength(1)
+      })
+    }
+
+    it("SET_PITCH_CONFIG enters pitch mode and ignores invalid fields", () => {
+      send(proc, {
+        type: "SET_PITCH_CONFIG",
+        payload: { windowSize: 3000, hopMs: -1, gate: 2, clarity: "x", minFreq: 90, maxFreq: 50 },
+      })
+      expect(proc.mode).toBe("pitch")
+      expect(proc.pitchConfig).toMatchObject({ windowSize: 4096, hopMs: 50, gate: 0.01 })
+      expect(proc.pitchConfig.minFreq).toBeLessThan(proc.pitchConfig.maxFreq)
+
+      send(proc, { type: "SET_PITCH_CONFIG", payload: { windowSize: 8192, minFreq: 28 } })
+      expect(proc.pitchConfig).toMatchObject({ windowSize: 8192, minFreq: 28 })
+
+      for (const bad of [null, 5, "x", { type: "LOAD_WASM" }])
+        expect(() => {
+          send(proc, { type: "SET_PITCH_CONFIG", payload: bad })
+          send(proc, { type: "LOAD_WASM", payload: bad })
+        }).not.toThrow()
+    })
+
+    it("reports a PITCH with the right frequency from a real sine, and keeps output silent", async () => {
+      await loadWasm(proc)
+      send(proc, {
+        type: "SET_PITCH_CONFIG",
+        payload: { windowSize: 4096, minFreq: 60, maxFreq: 400 },
+      })
+      send(proc, { type: "START" })
+      feed(proc, sine(110), 0.5)
+
+      const { freq, clarity, rms } = lastPitch(proc)
+      expect(freq).toBeCloseTo(110, 0)
+      expect(clarity).toBeGreaterThan(0.8)
+      expect(rms).toBeGreaterThan(0.3)
+    })
+
+    it("reports freq 0 below the noise gate and outside the instrument range", async () => {
+      await loadWasm(proc)
+      send(proc, { type: "SET_PITCH_CONFIG", payload: { windowSize: 4096, gate: 0.1 } })
       send(proc, { type: "START" })
 
-      const input = new Float32Array(QUANTUM).fill(0.5)
-      const chunkSize = Math.round(SAMPLE_RATE * 0.1)
-      const quanta = Math.ceil(chunkSize / QUANTUM)
-      for (let i = 0; i < quanta; i++) {
-        expect(runQuantum(proc, input).output.every((s) => s === 0)).toBe(true)
-      }
+      feed(proc, sine(110, 0.05), 0.3) // rms 0.035 < gate
+      expect(lastPitch(proc).freq).toBe(0)
 
-      const chunks = ofType(proc, "PITCH_CHUNK")
-      expect(chunks).toHaveLength(1)
-      expect((chunks[0].payload as Float32Array).length).toBe(chunkSize)
-      const transfer = proc.port.postMessage.mock.calls.find(
-        (c) => c[0].type === "PITCH_CHUNK",
-      )?.[1]
-      expect(transfer).toHaveLength(1)
+      send(proc, { type: "SET_PITCH_CONFIG", payload: { gate: 0.01, minFreq: 200, maxFreq: 400 } })
+      feed(proc, sine(110), 0.3) // detected 110 Hz is below minFreq
+      expect(lastPitch(proc).freq).toBe(0)
+    })
+
+    it("keeps the loaded detector across mode switches and answers a repeat LOAD_WASM", async () => {
+      await loadWasm(proc)
+      send(proc, { type: "SET_MODE", payload: "sequencer" })
+      send(proc, { type: "SET_MODE", payload: "pitch" })
+      send(proc, { type: "LOAD_WASM" })
+      expect(ofType(proc, "WASM_READY")).toHaveLength(2)
+    })
+
+    it("posts WASM_ERROR for bytes that are not a wasm module, and still reports level", async () => {
+      send(proc, { type: "LOAD_WASM", payload: new ArrayBuffer(16) })
+      await vi.waitFor(() => {
+        expect(ofType(proc, "WASM_ERROR")).toHaveLength(1)
+      })
+
+      send(proc, { type: "SET_PITCH_CONFIG", payload: { windowSize: 1024 } })
+      send(proc, { type: "START" })
+      feed(proc, sine(110), 0.2)
+      expect(lastPitch(proc)).toMatchObject({ freq: 0 })
+      expect(lastPitch(proc).rms).toBeGreaterThan(0.3)
     })
 
     it("survives a quantum with no input connected", () => {
