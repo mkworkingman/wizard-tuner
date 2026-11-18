@@ -1,19 +1,12 @@
 {
   "mcpServers": {
     "chrome-devtools": {
-      "command": "cmd",
-      "args": [
-        "/c",
-        "npx",
-        "-y",
-        "chrome-devtools-mcp@1.12.0",
-        "--isolated",
-        "--no-usage-statistics"
-      ]
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@1.12.0", "--isolated", "--no-usage-statistics"]
     },
     "shadcn": {
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "shadcn@4.23.0", "mcp"]
+      "command": "npx",
+      "args": ["-y", "shadcn@4.23.0", "mcp"]
     },
     "storybook": {
       "type": "http",

@@ -3,12 +3,22 @@
 import { readFileSync } from "node:fs"
 
 const input = JSON.parse(readFileSync(0, "utf8"))
-const command = input.tool_input?.command ?? ""
+const raw = input.tool_input?.command ?? ""
+// Match on the command with quoted strings blanked out, so `grep "next dev"` is not blocked.
+const command = raw.replace(/"(?:[^"\\]|\\.)*"|'[^']*'/g, '""')
 
 // Start of a command: beginning of the string or after a shell separator.
 const START = String.raw`(?:^|[;&|(]\s*|\s)`
 
 const RULES = [
+  {
+    test: /\bgit\s+commit\b[^;&|]*(?:--no-verify\b|\s-[a-zA-Z]*n[a-zA-Z]*(?:\s|$))/,
+    message: "Blocked: never skip the pre-commit gate (--no-verify / -n). Fix the failing check.",
+  },
+  {
+    test: new RegExp(`${START}(?:cat|type|less|more|head|tail|bat)\\s[^;&|]*\\.env\\b`),
+    message: "Blocked: .env files are off limits.",
+  },
   {
     test: new RegExp(
       `${START}(?:pnpm\\s+(?:run\\s+)?(?:dev|storybook|test:watch)|(?:pnpm\\s+exec\\s+|npx\\s+)?next\\s+dev|(?:pnpm\\s+exec\\s+|npx\\s+)?storybook\\s+dev)(?:\\s|$|[;&|)])`,

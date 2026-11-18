@@ -13,7 +13,7 @@ build the leaf ones first (each its own run), and say so.
 
 ## 0. Input
 
-- Best: the Figma MCP (Dev Mode). Pull the design context, the variables (`get_variable_defs`)
+- Best: the Figma MCP (Dev Mode). It is not in the project's `.mcp.json`; it comes from the user's own MCP scope. Pull the design context, the variables (`get_variable_defs`)
   and a screenshot of the node.
 - Fallback: a screenshot plus specs the user pastes. Ask for the values you can't read reliably
   (exact colours, spacing, font sizes).

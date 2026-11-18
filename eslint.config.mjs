@@ -110,6 +110,18 @@ export default defineConfig([
     },
   },
 
+  // `cn` comes from @/lib/utils only (the "cn" npm package is wrapped there).
+  {
+    files: ["**/*.{ts,tsx}"],
+    ignores: ["lib/utils.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { paths: [{ name: "cn", message: 'Import { cn } from "@/lib/utils" instead.' }] },
+      ],
+    },
+  },
+
   // Component files and their stories are PascalCase (NavButton.tsx, NavButton.stories.tsx).
   // components/ui stays kebab-case (shadcn CLI output).
   {

@@ -5,9 +5,10 @@ import path from "node:path"
 
 const input = JSON.parse(readFileSync(0, "utf8"))
 const file = input.tool_input?.file_path
+const root = process.env.CLAUDE_PROJECT_DIR ?? input.cwd ?? process.cwd()
 if (!file) process.exit(0)
 
-const rel = path.relative(process.cwd(), file).split(path.sep).join("/")
+const rel = path.relative(root, file).split(path.sep).join("/")
 if (!/^app\/(?:.+\/)?page\.tsx$/.test(rel)) process.exit(0)
 
 // URL = path segments minus `app`, route groups `(group)` and `page.tsx`.
@@ -16,7 +17,7 @@ const url = "/" + segments.filter((s) => !s.startsWith("(")).join("/")
 
 let routes = ""
 try {
-  routes = readFileSync(path.join(process.cwd(), "e2e", "routes.ts"), "utf8")
+  routes = readFileSync(path.join(root, "e2e", "routes.ts"), "utf8")
 } catch {
   // No routes file: fall through and remind.
 }

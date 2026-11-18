@@ -7,9 +7,10 @@ const FORMATTABLE = /\.(ts|tsx|js|jsx|mjs|mts|cjs|json|css|md|mdx|ya?ml)$/i
 
 const input = JSON.parse(readFileSync(0, "utf8"))
 const file = input.tool_input?.file_path
+const root = process.env.CLAUDE_PROJECT_DIR ?? input.cwd ?? process.cwd()
 
 if (file && FORMATTABLE.test(file)) {
-  const rel = path.relative(process.cwd(), file)
+  const rel = path.relative(root, file)
   if (!rel.startsWith("..") && !rel.includes("node_modules")) {
     try {
       execFileSync("pnpm", ["exec", "prettier", "--write", "--ignore-unknown", file], {

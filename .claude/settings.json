@@ -3,16 +3,6 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/remind-skills.mjs\"",
-            "timeout": 10
-          }
-        ]
-      },
-      {
         "matcher": "Bash",
         "hooks": [
           {
@@ -68,9 +58,19 @@
       "Bash(git diff*)",
       "Bash(git log*)",
       "mcp__shadcn",
-      "mcp__storybook"
+      "mcp__storybook",
+      "Bash(pnpm build)",
+      "Bash(pnpm e2e*)",
+      "Bash(pnpm verify:full)"
     ],
-    "ask": ["Bash(git push*)", "Bash(pnpm add*)", "Bash(pnpm remove*)", "Bash(pnpm dlx*)"],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(pnpm add*)",
+      "Bash(pnpm remove*)",
+      "Bash(pnpm dlx*)",
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf*)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
@@ -78,7 +78,14 @@
       "Write(./.env*)",
       "Edit(./pnpm-lock.yaml)",
       "Edit(./.next/**)",
-      "Edit(./next-env.d.ts)"
+      "Edit(./next-env.d.ts)",
+      "Bash(cat .env*)",
+      "Bash(type .env*)",
+      "Bash(less .env*)",
+      "Bash(head .env*)",
+      "Bash(tail .env*)",
+      "Bash(git commit*--no-verify*)",
+      "Bash(git commit* -n *)"
     ]
   }
 }

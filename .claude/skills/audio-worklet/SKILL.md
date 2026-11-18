@@ -80,7 +80,7 @@ Served raw: plain JS, no TypeScript, no `import`, no `@/` aliases.
 
 ## Input tools
 
-The tuner feeds the mic into the shared node:
+**Planned, not built yet** (`app/(tools)/tuner` is still a stub). The tuner is meant to feed the mic into the shared node:
 
 ```ts
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
