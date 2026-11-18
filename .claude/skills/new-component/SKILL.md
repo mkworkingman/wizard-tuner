@@ -53,8 +53,9 @@ do).
 Tokens live in `app/globals.css`: `background`, `foreground`, and the per-tool families
 (`tool-<name>`, `tool-<name>-surface`, `tool-<name>-hover`, `tool-foreground`). The app is dark-only
 for now: `:root` holds the dark values and there is no light theme. Read the file; don't trust
-this list if it's out of date. shadcn primitives expect the shadcn base tokens (`primary`,
-`muted`, `border`, `ring`, …), which were removed: add the ones a primitive needs before using it.
+this list if it's out of date. shadcn primitives expect the shadcn base tokens. Some exist
+(`muted`, `muted-foreground`, `border`, `ring`), others (e.g. `primary`) don't: grep `globals.css`
+for each one a primitive uses and add only the missing ones.
 
 Colours, in this order:
 

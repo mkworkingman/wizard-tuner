@@ -43,7 +43,7 @@ When to verify:
 ## Design system rules
 
 - Tokens live only in `app/globals.css` (CSS variables + `@theme inline`). Need a new colour, radius or font? Add a token there.
-- Use semantic utilities (`bg-primary`, `text-muted-foreground`, `border-border`). Never raw palette colours (`bg-zinc-500`), hex, or arbitrary colour values (`bg-[#fff]`) — ESLint fails on them.
+- Use semantic utilities (`bg-muted`, `text-muted-foreground`, `border-border`, `bg-tool-<name>`; check `app/globals.css` that the token exists, ESLint won't catch an unregistered class). Never raw palette colours (`bg-zinc-500`), hex, or arbitrary colour values (`bg-[#fff]`) — ESLint fails on them.
 - **8px grid:** spacing and sizes (padding, margin, gap, width/height, position) are multiples of 8px = 0.5rem, in Tailwind and in hand-written CSS (rem in multiples of 0.5rem). Tailwind's scale is 0.25rem (4px) per step, so use even steps: `p-2` (8px), `gap-4` (16px), `h-10` (40px).
 - 4px (0.25rem: `p-1`, `gap-1`) is allowed, but avoid it. Use it only where 8px is clearly too loose, e.g. an icon next to text or badge padding.
 - Nothing else off the grid: no odd steps above 1 (`p-3`, `h-5`), no half steps (`gap-1.5`), no arbitrary px (`w-[13px]`). ESLint fails on them.

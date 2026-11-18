@@ -35,9 +35,11 @@ const cache = path.join(
 if (existsSync(cache) && readFileSync(cache, "utf8") === digest) process.exit(0)
 
 // Paths that affect what stories render: stories, components (incl. route-private
-// `_components`), global styles and Storybook config.
+// `_components`), hooks and lib (stories import them), global styles and Storybook config.
 const UI_CHANGED =
-  /(^|[\s/"])(stories|components|_components|\.storybook)\/|app\/globals\.css/m.test(changed)
+  /(^|[\s/"])(stories|components|_components|hooks|lib|\.storybook)\/|app\/globals\.css/m.test(
+    changed,
+  )
 
 const scripts = ["typecheck", "lint", "format:check", "test"]
 if (UI_CHANGED) scripts.push("test:stories")

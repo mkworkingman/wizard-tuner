@@ -51,7 +51,10 @@ Build the full protocol from the code, not from comments:
 
 Report:
 
-- Messages sent but never handled, or handled but never sent.
+- Messages sent but never handled, or handled but never sent. Exception: pitch mode
+  (`SET_MODE`, `LOAD_WASM`, `SET_PITCH_CONFIG`, `WASM_READY`/`WASM_ERROR`) is implemented
+  and tested on the processor side; its main-thread hook is planned. List these as
+  "pending (no sender yet)", not as bugs. Once a sender exists, review them normally.
 - Payload shape mismatches between sender and handler.
 - Messages handled in the wrong place: engine messages (`AUTO_SUSPEND`) belong
   to the store; tool messages (`INIT_GRID`, `SET_BPM`, `UPDATE_GRID`, `TICK`...)
