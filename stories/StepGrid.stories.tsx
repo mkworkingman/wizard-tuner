@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
-
 import { StepGrid } from "@/app/(tools)/beat-machine/_components/StepGrid"
 import { INITIAL_GRID } from "@/hooks/useBeatMachine"
 
