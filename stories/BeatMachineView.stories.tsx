@@ -11,6 +11,8 @@ const meta = {
     isPlaying: false,
     isReady: true,
     grid: INITIAL_GRID,
+    bpm: 120,
+    onBpmChange: fn(),
     onStart: fn(),
     onStop: fn(),
   },
