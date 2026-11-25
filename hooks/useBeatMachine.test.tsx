@@ -1,3 +1,4 @@
+import { Activity, type ReactNode } from "react"
 import { act, render, renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -198,6 +199,23 @@ describe("useBeatMachine", () => {
 
     expect(types()).not.toContain("START")
     expect(mocks.actions.stopAudio).toHaveBeenCalledTimes(1)
+  })
+
+  it("clears isPlaying when the page is hidden but keeps its state, and stays stopped on return", async () => {
+    let mode: "visible" | "hidden" = "visible"
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <Activity mode={mode}>{children}</Activity>
+    )
+    const { result, rerender } = renderHook(() => useBeatMachine(), { wrapper })
+    await act(() => result.current.startAudio())
+    expect(result.current.isPlaying).toBe(true)
+
+    mode = "hidden"
+    rerender()
+    mode = "visible"
+    rerender()
+
+    expect(result.current.isPlaying).toBe(false)
   })
 
   it("reports not ready and not playing once the engine has failed", async () => {

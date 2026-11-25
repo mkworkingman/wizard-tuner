@@ -82,6 +82,9 @@ export function useBeatMachine() {
       port.removeEventListener("message", handleMessage)
       setActive(currentStepRef.current, false)
       currentStepRef.current = 0
+      // With cacheComponents a hidden page keeps its state while effects are cleaned up:
+      // the audio just stopped, so the button must go back to Start.
+      setIsPlaying(false)
     }
   }, [actions, workletNode])
 
