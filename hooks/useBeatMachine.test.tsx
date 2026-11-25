@@ -58,6 +58,30 @@ describe("useBeatMachine", () => {
     expect(bpm).toEqual({ type: "SET_BPM", payload: 120 })
   })
 
+  it("toggleStep flips the hit, posts UPDATE_GRID, ignores unknown instruments", () => {
+    const { result, unmount } = renderHook(() => useBeatMachine())
+    port.postMessage.mockClear()
+
+    act(() => {
+      result.current.toggleStep("kick", 1)
+    })
+    expect(messages()).toEqual([
+      { type: "UPDATE_GRID", payload: { instrument: "kick", step: 1, value: 1 } },
+    ])
+    expect(result.current.grid.kick[1]).toBe(1)
+
+    act(() => {
+      result.current.toggleStep("kick", 1)
+    })
+    expect(result.current.grid.kick[1]).toBe(0)
+
+    act(() => {
+      result.current.toggleStep("nope", 0)
+    })
+    expect(port.postMessage).toHaveBeenCalledTimes(2)
+    unmount()
+  })
+
   it("calls initAudio but posts nothing while there is no node yet", () => {
     mocks.node = null
     renderHook(() => useBeatMachine())

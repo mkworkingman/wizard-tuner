@@ -11,6 +11,7 @@ export type BeatMachineViewProps = {
   grid: BeatGrid
   onStart: () => void
   onStop: () => void
+  onToggleStep?: (instrument: string, step: number) => void
   stepGridRef?: React.Ref<HTMLDivElement>
   activeStep?: number
 }
@@ -22,6 +23,7 @@ export function BeatMachineView({
   grid,
   onStart,
   onStop,
+  onToggleStep,
   stepGridRef,
   activeStep,
 }: BeatMachineViewProps) {
@@ -40,7 +42,7 @@ export function BeatMachineView({
         </span>
       </Button>
 
-      <StepGrid ref={stepGridRef} grid={grid} activeStep={activeStep} />
+      <StepGrid ref={stepGridRef} grid={grid} activeStep={activeStep} onToggleStep={onToggleStep} />
     </div>
   )
 }

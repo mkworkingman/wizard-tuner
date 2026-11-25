@@ -24,6 +24,9 @@ export function useBeatMachine() {
   const status = useAudioStatus()
   const workletNode = useWorkletNode()
   const [isPlaying, setIsPlaying] = useState(false)
+  const [grid, setGrid] = useState<BeatGrid>(INITIAL_GRID)
+  // Latest grid for the mount effect, so INIT_GRID carries edits without re-running on each toggle.
+  const gridRef = useRef(grid)
   const currentStepRef = useRef(0)
   const stepIndicatorRef = useRef<HTMLDivElement>(null)
   const isMountedRef = useRef(false)
@@ -64,7 +67,7 @@ export function useBeatMachine() {
     // on every mount, the processor may still hold another tool's state.
     port.postMessage({
       type: "INIT_GRID",
-      payload: { grid: INITIAL_GRID, gridLength: GRID_LENGTH, stepsPerBeat: STEPS_PER_BEAT },
+      payload: { grid: gridRef.current, gridLength: GRID_LENGTH, stepsPerBeat: STEPS_PER_BEAT },
     })
     port.postMessage({ type: "SET_BPM", payload: INITIAL_BPM })
 
@@ -77,6 +80,16 @@ export function useBeatMachine() {
       currentStepRef.current = 0
     }
   }, [actions, workletNode])
+
+  const toggleStep = (instrument: string, step: number) => {
+    const row = gridRef.current[instrument] as number[] | undefined
+    if (!row) return
+    const value = row[step] ? 0 : 1
+    const next = { ...gridRef.current, [instrument]: row.map((v, i) => (i === step ? value : v)) }
+    gridRef.current = next
+    setGrid(next)
+    workletNode?.port.postMessage({ type: "UPDATE_GRID", payload: { instrument, step, value } })
+  }
 
   const startAudio = async () => {
     await actions.runAudio()
@@ -98,9 +111,10 @@ export function useBeatMachine() {
   return {
     startAudio,
     stopAudio,
+    toggleStep,
     stepIndicatorRef,
     isPlaying: isPlaying && status === "success",
     isReady: status === "success",
-    grid: INITIAL_GRID,
+    grid,
   }
 }
