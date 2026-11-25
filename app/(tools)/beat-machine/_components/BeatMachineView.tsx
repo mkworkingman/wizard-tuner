@@ -2,12 +2,13 @@ import type * as React from "react"
 
 import { StepGrid } from "./StepGrid"
 import { Button } from "@/components/ui/button"
+import type { BeatGrid } from "@/hooks/useBeatMachine"
 import { cn } from "@/lib/utils"
 
 export type BeatMachineViewProps = {
   isPlaying: boolean
   isReady: boolean
-  stepCount: number
+  grid: BeatGrid
   onStart: () => void
   onStop: () => void
   stepGridRef?: React.Ref<HTMLDivElement>
@@ -18,7 +19,7 @@ export type BeatMachineViewProps = {
 export function BeatMachineView({
   isPlaying,
   isReady,
-  stepCount,
+  grid,
   onStart,
   onStop,
   stepGridRef,
@@ -39,7 +40,7 @@ export function BeatMachineView({
         </span>
       </Button>
 
-      <StepGrid ref={stepGridRef} stepCount={stepCount} activeStep={activeStep} />
+      <StepGrid ref={stepGridRef} grid={grid} activeStep={activeStep} />
     </div>
   )
 }

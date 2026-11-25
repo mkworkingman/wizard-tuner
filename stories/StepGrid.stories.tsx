@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
 import { StepGrid } from "@/app/(tools)/beat-machine/_components/StepGrid"
+import { INITIAL_GRID } from "@/hooks/useBeatMachine"
 
 const meta = {
   title: "Components/StepGrid",
   component: StepGrid,
-  args: { stepCount: 16 },
+  args: { grid: INITIAL_GRID },
 } satisfies Meta<typeof StepGrid>
 
 export default meta

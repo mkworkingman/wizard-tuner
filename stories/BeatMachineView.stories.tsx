@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 import { expect, fireEvent, fn } from "storybook/test"
 
 import { BeatMachineView } from "@/app/(tools)/beat-machine/_components/BeatMachineView"
+import { INITIAL_GRID } from "@/hooks/useBeatMachine"
 
 const meta = {
   title: "Components/BeatMachineView",
@@ -9,7 +10,7 @@ const meta = {
   args: {
     isPlaying: false,
     isReady: true,
-    stepCount: 16,
+    grid: INITIAL_GRID,
     onStart: fn(),
     onStop: fn(),
   },

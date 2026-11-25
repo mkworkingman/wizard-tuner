@@ -4,7 +4,7 @@ import { useAudioActions, useAudioStatus, useWorkletNode } from "@/store/audio-e
 
 export type BeatGrid = Record<string, number[]>
 
-const INITIAL_GRID: BeatGrid = {
+export const INITIAL_GRID: BeatGrid = {
   kick: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
   snare: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
   hats: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -43,9 +43,11 @@ export function useBeatMachine() {
 
     const indicator = stepIndicatorRef.current
     const setActive = (step: number, active: boolean) => {
-      const cell = indicator?.querySelector(`[data-step="${String(step)}"]`)
-      if (active) cell?.setAttribute("data-active", "")
-      else cell?.removeAttribute("data-active")
+      // One cell per instrument row shares each step: mark the whole column.
+      indicator?.querySelectorAll(`[data-step="${String(step)}"]`).forEach((cell) => {
+        if (active) cell.setAttribute("data-active", "")
+        else cell.removeAttribute("data-active")
+      })
     }
 
     const handleMessage = (e: MessageEvent<{ type?: string; step?: number }>) => {
@@ -99,6 +101,6 @@ export function useBeatMachine() {
     stepIndicatorRef,
     isPlaying: isPlaying && status === "success",
     isReady: status === "success",
-    stepCount: GRID_LENGTH,
+    grid: INITIAL_GRID,
   }
 }
