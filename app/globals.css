@@ -191,6 +191,17 @@
   }
 }
 
+/*
+ * Tool page <-> tool page: the cards have different names, so no morph pair forms
+ * and the old card fades out while the new one fades in (home <-> tool still morphs).
+ */
+::view-transition-old(.tool-fade) {
+  animation: morph-fade-out var(--default-transition-duration) ease-out both;
+}
+::view-transition-new(.tool-fade) {
+  animation: morph-fade-in var(--default-transition-duration) ease-in both;
+}
+
 /* Box colours drawn during each tool's morph. */
 ::view-transition-image-pair(tuner-card) {
   --morph-border: var(--tool-tuner);

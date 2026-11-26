@@ -44,7 +44,13 @@ export function ToolCard({ className, tool, title, children, ...props }: ToolCar
   const resolvedTool = tool ?? "tuner"
 
   return (
-    <ViewTransition name={toolTransitionName(resolvedTool)} share="morph" default="none">
+    <ViewTransition
+      name={toolTransitionName(resolvedTool)}
+      share="morph"
+      enter="tool-fade"
+      exit="tool-fade"
+      default="none"
+    >
       <section
         data-slot="tool-card"
         data-tool={resolvedTool}
